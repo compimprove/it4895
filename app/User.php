@@ -45,4 +45,9 @@ class User extends Authenticatable
         $user->password = Hash::make($data['password']);
         return $user;
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Chat::class);
+    }
 }
