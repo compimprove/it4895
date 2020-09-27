@@ -18,9 +18,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::post("/logout", 'AuthController@logout');
 });
 Route::post('login', 'AuthController@getToken');
 Route::post('register', 'AuthController@register');
 
-Route::get('/messages', 'ChatController@fetchAllMessages');
-Route::post('/messages', 'ChatController@sendMessage');
+Route::get('messages', 'ChatController@fetchAllMessages');
+Route::post('messages', 'ChatController@sendMessage');

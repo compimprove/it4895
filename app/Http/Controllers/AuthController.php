@@ -54,4 +54,10 @@ class AuthController extends Controller
             "email" => $user->email,
         ];
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return response('', Response::HTTP_OK);
+    }
 }
