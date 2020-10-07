@@ -14,12 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::post("/logout", 'AuthController@logout');
     Route::post("/change-password", "AuthController@changePassword");
+    Route::post("/device", "DeviceController@setDeviceInfo");
 });
 Route::post('login', 'AuthController@getToken');
 Route::post('register', 'AuthController@register');

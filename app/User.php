@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->hasMany(Chat::class);
     }
 
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
+    }
+
     public function changePassword(string $password)
     {
         $this->password = Hash::make($password);
@@ -53,6 +58,9 @@ class User extends Authenticatable
     {
         $user = new User();
         $user->email = $data['email'];
+        $user->name = $data["name"];
+        $user->phone_number = $data["phone_number"];
+        $user->uuid = $data["uuid"];
         $user->password = Hash::make($data['password']);
         return $user;
     }

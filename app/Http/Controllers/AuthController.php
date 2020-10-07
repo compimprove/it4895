@@ -15,21 +15,35 @@ class AuthController extends Controller
     public function getToken(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
+            'phone_number' => 'required|digits:10',
+            'password' => 'required|string|max:10|min:6',
+            'uuid' => 'required|uuid'
         ]);
         if ($validator->fails()) {
-            return response($validator->errors(), Response::HTTP_BAD_REQUEST);
+            return [
+                "code" => 1003,
+                "message" => "Parameter type is invalid",
+                "data" => $validator->errors()
+            ];
         }
-        $user = User::where('email', $request->email)->first();
-
+        $user = User::where('phone_number', $request["phone_number"])->first();
         if ($this->checkPasswordCorrect($user, $request->password)) {
             $user->tokens()->delete();
             return [
-                'token' => $user->createToken(env('APP_KEY'))->plainTextToken
+                "code" => 1000,
+                "message" => "OK",
+                "data" => [
+                    "id" => $user->id,
+                    "username" => $user->name,
+                    "token" => $user->createToken(env('APP_KEY'))->plainTextToken,
+                    "avatar" => $user->avatar
+                ]
             ];
         } else {
-            return response(['Not correct'], Response::HTTP_BAD_REQUEST);
+            return [
+                "code" => 1003,
+                "message" => "Password is not correct"
+            ];
         }
     }
 
@@ -41,40 +55,81 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
+            'phone_number' => 'required|unique:users|digits:10',
+            'password' => 'required|string|max:10|min:6',
+            'uuid' => 'required'
         ]);
         if ($validator->fails()) {
-            return response($validator->errors(), Response::HTTP_BAD_REQUEST);
+            $phoneUniqueValidator = Validator::make($request->all(), [
+                'phone_number' => 'required|unique:users'
+            ]);
+            if ($phoneUniqueValidator->fails()) {
+                return [
+                    "code" => 9996,
+                    "message" => "User existed"
+                ];
+            } else {
+                return [
+                    "code" => 1003,
+                    "message" => "Parameter type is invalid",
+                    "data" => $validator->errors()
+                ];
+            }
         }
         $user = User::makeUser([
-            "email" => $request["email"],
-            "password" => $request["password"]
+            "phone_number" => $request["phone_number"],
+            "password" => $request["password"],
+            "uuid" => $request["uuid"],
+            "name" => $request["name"],
+            "email" => $request["email"]
         ]);
         $user->save();
         return [
-            "email" => $user->email
+            "code" => 1000,
+            "message" => "OK"
         ];
     }
 
     public function changePassword(Request $request)
     {
+        $user = $request->user();
+        if ($user["is_blocked"]) {
+            return [
+                "code" => 9995,
+                "message" => "User is not validated"
+            ];
+        }
         $validator = Validator::make($request->all(), [
-            'password' => 'required|confirmed',
+            'password' => 'required|string|max:10|min:6',
+            'new_password' => 'required|string|max:10|min:6'
         ]);
         if ($validator->fails()) {
-            return response($validator->errors(), Response::HTTP_BAD_REQUEST);
+            return [
+                "code" => 1003,
+                "message" => "Parameter type is invalid",
+                "data" => $validator->errors()
+            ];
+        } else if (!$this->checkPasswordCorrect($user, $request['password'])) {
+            return [
+                "code" => 1003,
+                "message" => "Old password is not correct"
+            ];
+        } else {
+            $user->changePassword($request["new_password"]);
+            $user->save();
+            return [
+                "code" => 1000,
+                "message" => "OK"
+            ];
         }
-        $request->user()->changePassword($request["password"]);
-        $request->user()->save();
-        return [
-            "email" => $request->user()->email
-        ];
     }
 
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
-        return response('', Response::HTTP_OK);
+        return response([
+            "code" => 1000,
+            "message" => "OK"
+        ]);
     }
 }
