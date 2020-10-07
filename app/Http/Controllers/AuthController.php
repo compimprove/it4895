@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-
 class AuthController extends Controller
 {
     public function getToken(Request $request)
@@ -48,10 +47,28 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response($validator->errors(), Response::HTTP_BAD_REQUEST);
         }
-        $user = User::getUser($request->all());
+        $user = User::makeUser([
+            "email" => $request["email"],
+            "password" => $request["password"]
+        ]);
         $user->save();
         return [
-            "email" => $user->email,
+            "email" => $user->email
+        ];
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|confirmed',
+        ]);
+        if ($validator->fails()) {
+            return response($validator->errors(), Response::HTTP_BAD_REQUEST);
+        }
+        $request->user()->changePassword($request["password"]);
+        $request->user()->save();
+        return [
+            "email" => $request->user()->email
         ];
     }
 

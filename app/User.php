@@ -38,16 +38,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public static function getUser(array $data): User
+
+    public function messages()
+    {
+        return $this->hasMany(Chat::class);
+    }
+
+    public function changePassword(string $password)
+    {
+        $this->password = Hash::make($password);
+    }
+    // -------------------------------- static --------------------------------
+    public static function makeUser(array $data): User
     {
         $user = new User();
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
         return $user;
-    }
-
-    public function messages()
-    {
-        return $this->hasMany(Chat::class);
     }
 }
