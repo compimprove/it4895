@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSearchTable extends Migration
+class CreatePostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateSearchTable extends Migration
      */
     public function up()
     {
-        Schema::create('search', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->integer("user_id");
-            $table->string("keyword");
-            $table->integer("index");
+            $table->text("content");
+            $table->integer("like");
+            $table->string("image_link");
+            $table->string("video_link");
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateSearchTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('search');
+        Schema::dropIfExists('posts');
     }
 }
