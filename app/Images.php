@@ -3,15 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use DB;
 
-class Post extends Model
+class Images extends Model
 {
     //
-    protected $table = 'posts';
+    protected $table = 'images';
     protected $fillable = [
-        'id', 'user_id', 'content', 'like'
+        'id', 'post_id', 'image_sort', 'link'
     ];
 }
-
-
