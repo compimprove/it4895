@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
-use App\Images;
+use App\Image;
+use App\User;
 use App\Enums\ApiStatusCode;
 use App\Enums\URL;
 use Illuminate\Support\Facades\Validator;
@@ -28,8 +29,7 @@ class PostController extends Controller
     	else {
     		$validator = Validator::make($request->all(), [
 	            'described' => 'string',
-	            'video_link' => 'string',
-	            'image_link' => 'string'
+	            'video' => 'string'
 	        ]);
 
 	        if ($validator->fails()) {
@@ -41,6 +41,25 @@ class PostController extends Controller
 	    	}
     	}
 
+    	// kiểm tra xem có file ảnh không
+    	if($request->hasFile('image')) {
+   			$allowedfileExtension=['jpg','png'];
+			$files = $request->file('image');
+
+            // flag xem có thực hiện lưu DB không. Mặc định là có
+			$exe_flg = true;
+			// kiểm tra tất cả các files xem có đuôi mở rộng đúng không
+			foreach($files as $file) { 
+				$extension = $file->getClientOriginalExtension();
+				$check = in_array($extension,$allowedfileExtension);
+
+				if(!$check) {
+                    // nếu có file nào không đúng đuôi mở rộng thì đổi flag thành false
+					$exe_flg = false;
+					break; 
+				} 
+			}
+		}
     	
 		$post = new Post([
             'user_id' => 1,
@@ -49,13 +68,28 @@ class PostController extends Controller
         ]);
 
         if ($post->save()) {
-
-        	$image = new Images([
-	        	'post_id' => $post->id,
-	        	'link' => $request['image_link'],
-	        	'image_sort' => 0
-	        ]);
-	        $image->save();
+			// nếu không có file nào vi phạm validate thì tiến hành lưu DB
+			if($exe_flg) {
+				$i = 1;
+				foreach ($request->file('image') as $image) {
+					$image->storeAs('image', $image->getClientOriginalName());
+					// $filename = $image->getClientOriginalName(); 
+					
+		        	$saveImage = new Image([
+			        	'post_id' => $post->id,
+			        	'link' => $image->getClientOriginalName(),
+			        	'image_sort' => $i
+			        ]);
+			        if ( $saveImage->save() ) {
+			        	$i++;
+			        } else {
+			        	return response()->json([
+			        		'code' => ApiStatusCode::LOST_CONNECT,
+			    			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
+			    		]);
+			        }
+				}
+			}
 
         	return response()->json(
         		[
@@ -74,5 +108,36 @@ class PostController extends Controller
     			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
     		]
         );
+    }
+
+    public function getPost($id) {
+    	$post = Post::where('id', $id)->first();
+    	$images = Image::where('post_id', $post->id)->get(['id', 'link']);
+    	$user = User::where('id', $post->user_id)->first();
+
+    	return response()->json([
+    		'code' => ApiStatusCode::OK, 
+    		'message' => 'Lấy bài viết thành công',
+    		'data' => [
+    			'id' => $post->id,
+    			'described' => $post->content,
+    			'created' => $post->created_at,
+    			'modified' => $post->updated_at,
+    			'like' => $post->like
+    		],
+    		'image' => $images,
+    		'author' => $user
+    	]);
+    }
+
+    public function deletePost($id) {
+    	$post = Post::where('id', $id)->first();
+
+    	if($post->delete()) {
+    		return response()->json([
+    			'code' => ApiStatusCode::OK,
+    			'message' => 'Xóa bài viết thành công'
+    		]);
+    	}
     }
 }

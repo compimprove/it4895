@@ -12,6 +12,10 @@ class Post extends Model
     protected $fillable = [
         'id', 'user_id', 'content', 'like'
     ];
+
+    public function images() {
+   		return $this->hasMany('App\Images');
+    }
 }
 
 
