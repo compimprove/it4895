@@ -22,9 +22,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("/logout", 'AuthController@logout');
     Route::post("/change-password", "AuthController@changePassword");
     Route::post("/device", "DeviceController@setDeviceInfo");
+    Route::get("/user/{id}", "UserController@getInfo");
+    Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
+    Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");
 });
+
+
 Route::post('login', 'AuthController@getToken');
 Route::post('register', 'AuthController@register');
+Route::post('check-verify-code', 'AuthController@checkVerifyCode')->name("check_verify_code");
+Route::post('testSaveFile', 'UserController@testSaveFile');
+Route::post('testDeleteFile', 'UserController@testDeleveFile');
 
 Route::get('messages', 'ChatController@fetchAllMessages');
 Route::post('messages', 'ChatController@sendMessage');
