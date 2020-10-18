@@ -36,3 +36,5 @@ Route::post('testDeleteFile', 'UserController@testDeleveFile');
 
 Route::get('messages', 'ChatController@fetchAllMessages');
 Route::post('messages', 'ChatController@sendMessage');
+
+Route::post('add-post', 'PostController@addPost');
