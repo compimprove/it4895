@@ -132,4 +132,46 @@ class AuthController extends Controller
             "message" => "OK"
         ]);
     }
+
+    public function checkVerifyCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone_number' => 'required|digits:10',
+            'code_verify' => 'required',
+        ]);
+        if ($validator->fails()) {
+            if (Validator::make($request->all(), [
+                'code_verify' => 'required',
+            ])->fails()) {
+                return [
+                    "code" => 1002,
+                    "message" => "Dont have Code Verify",
+                ];
+            } else {
+                return [
+                    "code" => 1003,
+                    "message" => "Parameter type is invalid",
+                    "data" => $validator->errors()
+                ];
+            }
+        } else {
+            $user = User::where("phone_number", $request["phone_number"])->first();
+            if ($user == null) {
+                return [
+                    "code" => 1004,
+                    "message" => "User didn't exist",
+                ];
+            } else {
+                $user->tokens()->delete();
+                return [
+                    "code" => 1000,
+                    "message" => "OK",
+                    "data" => [
+                        "id" => $user->id,
+                        "token" => $user->createToken(env('APP_KEY'))->plainTextToken,
+                    ]
+                ];
+            }
+        }
+    }
 }

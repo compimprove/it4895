@@ -20,7 +20,13 @@ class CreateUsersTable extends Migration
             $table->char('phone_number', 30)->unique();
             $table->string('password');
             $table->boolean('is_blocked')->default(false);
-            $table->string("avatar")->default("-1");
+            $table->string("avatar")->nullable();
+            $table->string("description")->nullable();
+            $table->string("address")->nullable();
+            $table->string("city")->nullable();
+            $table->string("country")->nullable();
+            $table->string("cover_image")->nullable();
+            $table->string("link")->nullable();
             $table->integer("is_online")->nullable();
             $table->integer("device_id")->nullable();
             $table->dateTime("verified_email_at")->nullable();
