@@ -42,11 +42,11 @@ Route::get('post/{id}', 'PostController@getPost');
 Route::get('post/delete/{id}', 'PostController@deletePost');
 
 
-Route::post('comment/add','CommentController@addComment');
+Route::post('comment/add/{id}','CommentController@addComment');
 Route::get('comment/{id}','CommentController@getComment');
 Route::get('comment/delete/{id}','CommentController@deleteComment');
 
-Route::post('like','UserLikePostController@likePost');
+Route::post('like/{id}','UserLikePostController@likePost');
 Route::get('dislike/{id}','UserLikePostController@dislikePost');
 
 Route::post('report/{id}','UserReportPostController@reportPost');

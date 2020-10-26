@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Post;
 use App\User;
+use App\UserReportPost;
 use App\Enums\ApiStatusCode;
 use App\Enums\URL;
 use Illuminate\Support\Facades\Validator;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 class UserReportPostController extends Controller
 {
     //
-    public function reportPost(Request $request) {
+    public function reportPost(Request $request, $id) {
 
     	$validator = Validator::make($request->all(), [
             'described' => 'required'
@@ -42,20 +43,21 @@ class UserReportPostController extends Controller
     	
 		$report = new UserReportPost([
             'user_id' => 1,
-            'post_id' => 1,
+            'post_id'=> $id,
             'description' => $request['described'],
             'type' => 1
         ]);
 
-        if ($post->save()) {
+        if ($report->save()) {
 	
         	return response()->json(
         		[
         			'code' => ApiStatusCode::OK,
         			'message' => 'Report thành công',
         			'data' => [
-        				'id' => $report->id,
-        				'url' => URL::ADDRESS . '/report/' . $report->id
+						'id' => $id,
+						'description'=>$request['described']
+        				
         			]
         		]
         	);

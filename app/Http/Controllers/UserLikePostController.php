@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
-
+use App\UserLikePost;
 use App\User;
 use App\Enums\ApiStatusCode;
 use App\Enums\URL;
@@ -13,17 +13,11 @@ use Illuminate\Support\Facades\Validator;
 class UserLikePostController extends Controller
 {
     //
-    public function likePost(Request $request) {
-        $validator = Validator::make($request->all(), [
-            
-        ]);
-        if ($validator->fails()) {
-            
-        }
+    public function likePost(Request $request,$post_id) {
+    
 		$like = new UserLikePost([
             'user_id' => 1,
-            'post_id' => 1,
-        
+            'post_id' => $post_id,
         ]);
 
         if ($like->save()) {
@@ -33,8 +27,8 @@ class UserLikePostController extends Controller
         			'code' => ApiStatusCode::OK,
         			'message' => 'Liked',
         			'data' => [
-        				'id' => $like->id,
-        				'url' => URL::ADDRESS . '/like/' . $like->id
+        				'id' => $post_id,
+        				
         			]
         		]
         	);

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
-
+use App\Comment;
 use App\User;
 use App\Enums\ApiStatusCode;
 use App\Enums\URL;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 class CommentController extends Controller
 {
     
-    public function addComment(Request $request) {
+    public function addComment(Request $request,$id) {
 
     	$validator = Validator::make($request->all(), [
             'described' => 'required'
@@ -45,20 +45,20 @@ class CommentController extends Controller
     	
 		$comment = new Comment([
             'user_id' => 1,
-            'post_id'=>1,
+            'post_id'=>$id,
             'content' => $request['described'],
           
         ]);
 
-        if ($post->save()) {
+        if ($comment->save()) {
 
         	return response()->json(
         		[
         			'code' => ApiStatusCode::OK,
         			'message' => 'Tạo comment thành công',
         			'data' => [
-        				'id' => $comment->id,
-        				'url' => URL::ADDRESS . '/comment/' . $comment->id
+        				'id_post' => $id,
+        				'content'=>$request['described']
         			]
         		]
         	);
@@ -80,11 +80,11 @@ class CommentController extends Controller
     		'code' => ApiStatusCode::OK, 
     		'message' => 'Lấy comment thành công',
     		'data' => [
-    			'id' => $comment->id,
+    			'id_post' => $id,
     			'described' => $comment->content,
     			'created' => $comment->created_at,
     			'modified' => $comment->updated_at,
-    			'post_id' => $comment->post_id,
+    		
     		],
     		//'post'=>$post,
     		'author' => $user
