@@ -38,13 +38,23 @@ class CommentController extends Controller
 	    			'message' => 'Kiểu tham số không đúng đắn',
 	    			'data' => $validator->errors()
 	    		]);
-	    	}
-    	}
+			}
+			else {
+				$post = Post::find($id);
+				if ($post == null) {
+					return [
+						"code" => 9992,
+						"message" => "Bài viết không tồn tại"
+					];
+			}
+		}
+		}
+		
 
     	
-    	
+    
 		$comment = new Comment([
-            'user_id' => 1,
+            'user_id' =>1,
             'post_id'=>$id,
             'content' => $request['described'],
           
@@ -57,7 +67,8 @@ class CommentController extends Controller
         			'code' => ApiStatusCode::OK,
         			'message' => 'Tạo comment thành công',
         			'data' => [
-        				'id_post' => $id,
+						'user_id'=>$comment->user_id,
+        				'post_id' => $id,
         				'content'=>$request['described']
         			]
         		]
@@ -72,23 +83,32 @@ class CommentController extends Controller
     }
 
     public function getComment($id) {
-    	$comment = Comment::where('id', $id)->first();
-    	//$post=Post::where('comment_id',$comment->id);
-    	$user = User::where('id', $comment->user_id)->first();
-
-    	return response()->json([
+		
+    	//$comment = Comment::where('id', $id)->first();
+		$post=Post::find($id);
+		//$user = User::where('id', $comment->user_id)->first();
+		if ($post == null) {
+			return [
+				"code" => 9992,
+				"message" => "Bài viết không tồn tại"
+			];
+	    }
+    	else {
+			return response()->json([
     		'code' => ApiStatusCode::OK, 
-    		'message' => 'Lấy comment thành công',
+    		'message' => 'Lấy comment bài viết thành công',
     		'data' => [
-    			'id_post' => $id,
-    			'described' => $comment->content,
-    			'created' => $comment->created_at,
-    			'modified' => $comment->updated_at,
+				'id_post'=>$id,
+				// 'id_comment' => $id,
+    			// 'described' => $comment->content,
+    			// 'created' => $comment->created_at,
+    			// 'modified' => $comment->updated_at
     		
     		],
     		//'post'=>$post,
-    		'author' => $user
-    	]);
+    		//'author' => $user
+		]);
+	  }
     }
 
     public function deleteComment($id) {
