@@ -40,13 +40,15 @@ Route::post('messages', 'ChatController@sendMessage');
 Route::post('post/add', 'PostController@addPost');
 Route::get('post/{id}', 'PostController@getPost');
 Route::get('post/delete/{id}', 'PostController@deletePost');
+//Route::post('post/addComment/{id}','PostController@addComment');
 
 
 Route::post('comment/add/{id}','CommentController@addComment');
 Route::get('comment/{id}','CommentController@getComment');
 Route::get('comment/delete/{id}','CommentController@deleteComment');
 
-Route::post('like/{id}','UserLikePostController@likePost');
-Route::get('dislike/{id}','UserLikePostController@dislikePost');
+Route::post('like/add/{id}','UserLikePostController@likePost');
+Route::get('like/{id}','UserLikePostController@getlikePost');
+//Route::get('dislike/{id}','UserLikePostController@dislikePost');
 
 Route::post('report/{id}','UserReportPostController@reportPost');

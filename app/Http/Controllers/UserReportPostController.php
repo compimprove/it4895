@@ -40,9 +40,9 @@ class UserReportPostController extends Controller
 	    	}
     	}
 
-    	
+    	$post=Post::find($id);
 		$report = new UserReportPost([
-            'user_id' => 1,
+            'user_id' => $post->user_id,
             'post_id'=> $id,
             'description' => $request['described'],
             'type' => 1
@@ -55,10 +55,12 @@ class UserReportPostController extends Controller
         			'code' => ApiStatusCode::OK,
         			'message' => 'Report thành công',
         			'data' => [
-						'id' => $id,
+						'post_id' => $id,
+						'user_id'=>$post->user_id,
 						'description'=>$request['described']
         				
-        			]
+					]
+					
         		]
         	);
         }

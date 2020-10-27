@@ -51,10 +51,10 @@ class CommentController extends Controller
 		}
 		
 
-    	
+    	$post = Post::find($id);
     
 		$comment = new Comment([
-            'user_id' =>1,
+            'user_id' =>$post->user_id,
             'post_id'=>$id,
             'content' => $request['described'],
           
@@ -83,30 +83,31 @@ class CommentController extends Controller
     }
 
     public function getComment($id) {
+		$post = Post::where('id', $id)->first();
+		$comment = Comment::where('post_id', $id)->first();
 		
-    	//$comment = Comment::where('id', $id)->first();
-		$post=Post::find($id);
-		//$user = User::where('id', $comment->user_id)->first();
+		
 		if ($post == null) {
 			return [
 				"code" => 9992,
 				"message" => "Bài viết không tồn tại"
 			];
-	    }
+		}
+		
     	else {
+			$user=User::find($post->user_id);
 			return response()->json([
     		'code' => ApiStatusCode::OK, 
     		'message' => 'Lấy comment bài viết thành công',
     		'data' => [
 				'id_post'=>$id,
-				// 'id_comment' => $id,
-    			// 'described' => $comment->content,
-    			// 'created' => $comment->created_at,
-    			// 'modified' => $comment->updated_at
-    		
+				'id_comment' =>$comment->id,
+    			'described' => $comment->content,
+    			'created' => $comment->created_at,
+				'modified' => $comment->updated_at,
+			
     		],
-    		//'post'=>$post,
-    		//'author' => $user
+    		'author' => $user
 		]);
 	  }
     }
@@ -115,10 +116,12 @@ class CommentController extends Controller
     	$comment = Comment::where('id', $id)->first();
 
     	if($comment->delete()) {
+		
     		return response()->json([
     			'code' => ApiStatusCode::OK,
     			'message' => 'Xóa comment thành công'
-    		]);
-    	}
+			]);
+			}
+    	
     }
 }

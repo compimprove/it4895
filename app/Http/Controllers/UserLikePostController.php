@@ -13,24 +13,25 @@ use Illuminate\Support\Facades\Validator;
 class UserLikePostController extends Controller
 {
     //
-    public function likePost(Request $request,$post_id) {
+    public function likePost(Request $request,$id) {
     
 		$like = new UserLikePost([
             'user_id' => 1,
-            'post_id' => $post_id,
+            'post_id' => $id,
         ]);
 
         if ($like->save()) {
-	
+	$post=Post::find($id);
         	return response()->json(
         		[
         			'code' => ApiStatusCode::OK,
         			'message' => 'Liked',
         			'data' => [
-        				'id' => $post_id,
-        				
+        				'post_id' => $id,
+        				'user_id'=>$post->user_id
         			]
-        		]
+				]
+				
         	);
         }
         else return response()->json(
@@ -42,30 +43,22 @@ class UserLikePostController extends Controller
     }
 
     public function getlikePost($id) {
-    	$like = UserLikePost::where('id', $id)->first();
-    	$post = Post::where('like', $like->id);
-    	$user = User::where('id', $like->user_id)->first();
-
+		$post = Post::where('id', $id)->first();
+    	$like = UserLikePost::where('post_id', $post->id)->first();
+  
+		$user = User::where('id', $post->user_id)->first();
     	return response()->json([
+			
     		'code' => ApiStatusCode::OK, 
     		'message' => 'Lấy số like thành công',
     		'data' => [
-    			'id' => $like->id,
+				'post_id'=>$id,
+				'like_id'=>$like->id,
     			'created' => $like->created_at,
     			'modified' => $like->updated_at,
     		],
-    		'post' => $post,
+    		
     		'author' => $user
     	]);
-    }
-
-    public function dislikePost($id) {
-    	$like = UserLikePost::where('id', $id)->first();
-    	if($like->delete()) {
-    		return response()->json([
-    			'code' => ApiStatusCode::OK,
-    			'message' => 'Disliked'
-    		]);
-    	}
     }
 }
