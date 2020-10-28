@@ -9,6 +9,7 @@ use App\User;
 use App\Enums\ApiStatusCode;
 use App\Enums\URL;
 use Illuminate\Support\Facades\Validator;
+use DB;
 
 class CommentController extends Controller
 {
@@ -84,8 +85,12 @@ class CommentController extends Controller
 
     public function getComment($id) {
 		$post = Post::where('id', $id)->first();
-		$comment = Comment::where('post_id', $id)->first();
-		
+		$comments = Comment::where('post_id', $id)->get();
+		foreach($comments as $comment) {
+			$comment['author'] = User::where('id', $comment["user_id"])->first()["name"];
+		}
+		// $comment = Comment::all();
+		// $comment = DB::table('comments')->where('post_id', $id)->find(3);
 		
 		if ($post == null) {
 			return [
@@ -101,10 +106,10 @@ class CommentController extends Controller
     		'message' => 'Lấy comment bài viết thành công',
     		'data' => [
 				'id_post'=>$id,
-				'id_comment' =>$comment->id,
-    			'described' => $comment->content,
-    			'created' => $comment->created_at,
-				'modified' => $comment->updated_at,
+				'comment' =>$comments,
+    			// 'described' => $comment->content,
+    			// 'created' => $comment->created_at,
+				// 'modified' => $comment->updated_at,
 			
     		],
     		'author' => $user
