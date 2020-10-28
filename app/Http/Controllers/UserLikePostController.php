@@ -13,22 +13,29 @@ use Illuminate\Support\Facades\Validator;
 class UserLikePostController extends Controller
 {
     //
-    public function likePost(Request $request,$id) {
-    
+    public function likePost(Request $request,$user_id,$post_id) {
+		$user=User::find($user_id);
 		$like = new UserLikePost([
-            'user_id' => 1,
-            'post_id' => $id,
-        ]);
-
+            'user_id'=>$user_id,
+            'post_id' => $post_id,
+		]);
+		    $post = Post::find($post_id);
+				if ($post == null) {
+					return [
+						"code" => 9992,
+						"message" => "Bài viết không tồn tại"
+					];
+		}
         if ($like->save()) {
-	$post=Post::find($id);
+			$post=Post::find($post_id);
+			
         	return response()->json(
         		[
         			'code' => ApiStatusCode::OK,
         			'message' => 'Liked',
         			'data' => [
-        				'post_id' => $id,
-        				'user_id'=>$post->user_id
+        				'post_id' => $post_id,
+        				'user'=>$like->user_id
         			]
 				]
 				
@@ -44,21 +51,26 @@ class UserLikePostController extends Controller
 
     public function getlikePost($id) {
 		$post = Post::where('id', $id)->first();
-    	$like = UserLikePost::where('post_id', $post->id)->first();
+    	$like = UserLikePost::where('post_id', $id)->count();
   
-		$user = User::where('id', $post->user_id)->first();
+	
+		if ($post == null) {
+			return [
+				"code" => 9992,
+				"message" => "Bài viết không tồn tại"
+			];
+		}
+		else{
     	return response()->json([
 			
     		'code' => ApiStatusCode::OK, 
     		'message' => 'Lấy số like thành công',
     		'data' => [
-				'post_id'=>$id,
-				'like_id'=>$like->id,
-    			'created' => $like->created_at,
-    			'modified' => $like->updated_at,
+				'post_id'=>$post,
+				'count_like'=>$like
     		],
     		
-    		'author' => $user
-    	]);
+    		
+    	]);}
     }
 }

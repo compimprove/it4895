@@ -87,11 +87,8 @@ class CommentController extends Controller
 		$post = Post::where('id', $id)->first();
 		$comments = Comment::where('post_id', $id)->get();
 		foreach($comments as $comment) {
-			$comment['author'] = User::where('id', $comment["user_id"])->first()["name"];
+			$comment['author'] = User::where('id', $comment["user_id"])->get();
 		}
-		// $comment = Comment::all();
-		// $comment = DB::table('comments')->where('post_id', $id)->find(3);
-		
 		if ($post == null) {
 			return [
 				"code" => 9992,
@@ -105,14 +102,12 @@ class CommentController extends Controller
     		'code' => ApiStatusCode::OK, 
     		'message' => 'Lấy comment bài viết thành công',
     		'data' => [
-				'id_post'=>$id,
+				'post'=>$post,
 				'comment' =>$comments,
-    			// 'described' => $comment->content,
-    			// 'created' => $comment->created_at,
-				// 'modified' => $comment->updated_at,
+    			'author' => $user
 			
     		],
-    		'author' => $user
+    		
 		]);
 	  }
     }

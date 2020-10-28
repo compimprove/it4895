@@ -47,7 +47,7 @@ Route::post('comment/add/{id}','CommentController@addComment');
 Route::get('comment/{id}','CommentController@getComment');
 Route::get('comment/delete/{id}','CommentController@deleteComment');
 
-Route::post('like/add/{id}','UserLikePostController@likePost');
+Route::post('like/add/{user_id}/{post_id}','UserLikePostController@likePost');
 Route::get('like/{id}','UserLikePostController@getlikePost');
 //Route::get('dislike/{id}','UserLikePostController@dislikePost');
 
