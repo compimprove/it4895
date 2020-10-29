@@ -1,5 +1,8 @@
 <?php
 
+use App\Chat;
+use App\Comment;
+use App\Post;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -25,6 +28,20 @@ class DatabaseSeeder extends Seeder
         $user->phone_number = '0987654322';
         $user->password = Hash::make('123456');
         $user->save();
+        $chats = factory(Chat::class, 5)->make([
+            "user_a_id" => 1,
+            "user_b_id" => 2
+        ]);
+        foreach ($chats as $chat) {
+            $chat->save();
+        }
+        $chats = factory(Chat::class, 5)->make([
+            "user_a_id" => 2,
+            "user_b_id" => 1
+        ]);
+        foreach ($chats as $chat) {
+            $chat->save();
+        }
         $user = new User();
         $user->email = 'admin3@gmail.com';
         $user->name = 'Admin3';
@@ -32,5 +49,13 @@ class DatabaseSeeder extends Seeder
         $user->password = Hash::make('123456');
         $user->is_blocked = true;
         $user->save();
+        $posts = factory(Post::class, 15)->make();
+        foreach ($posts as $post) {
+            $post->save();
+        }
+        $comments = factory(Comment::class, 20)->make();
+        foreach ($comments as $comment) {
+            $comment->save();
+        }
     }
 }

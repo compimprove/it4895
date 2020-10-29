@@ -2,11 +2,13 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Chat;
+use App\Comment;
 use Faker\Generator as Faker;
 
-$factory->define(Chat::class, function (Faker $faker) {
+$factory->define(Comment::class, function (Faker $faker) {
     return [
+        "user_id" => rand(1, 3),
+        "post_id" => rand(1, 10),
         "content" => $faker->sentence()
     ];
 });
