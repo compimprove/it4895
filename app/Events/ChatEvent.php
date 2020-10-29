@@ -13,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 class ChatEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    private $chat;
+    public $chat;
     /**
      * Create a new event instance.
      *
@@ -31,6 +31,23 @@ class ChatEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('chat');
+        $id1 = $this->chat->user_a_id;
+        $id2 = $this->chat->user_a_id;
+        if ($id1 < $id2) {
+            $str = (string) $id1 . (string) $id2;
+        } else {
+            $str = (string) $id2 . (string) $id1;
+        }
+        return new PrivateChannel('chat');
     }
+
+    // public function broadcastOn()
+    // {
+    //     return ['my-channel'];
+    // }
+
+    // public function broadcastAs()
+    // {
+    //     return 'my-event';
+    // }
 }

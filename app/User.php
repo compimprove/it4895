@@ -44,9 +44,14 @@ class User extends Authenticatable
         return $this["is_blocked"];
     }
 
-    public function messages()
+    public function messagesSend()
     {
-        return $this->hasMany(Chat::class);
+        return $this->hasMany(Chat::class, 'user_a_id');
+    }
+
+    public function messagesReceive()
+    {
+        return $this->hasMany(Chat::class, 'user_b_id');
     }
 
     public function devices()

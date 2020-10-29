@@ -11,6 +11,6 @@ class ChatSeeder extends Seeder
      */
     public function run()
     {
-        //
+        
     }
 }

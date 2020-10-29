@@ -25,8 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/user/{id}", "UserController@getInfo");
     Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
     Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");
+    Route::get('messages/{userId2}', 'ChatController@fetchAllMessages');
+    Route::post('messages/{userId2}', 'ChatController@sendMessage');
 });
-
 
 Route::post('login', 'AuthController@getToken');
 Route::post('register', 'AuthController@register');
@@ -34,8 +35,8 @@ Route::post('check-verify-code', 'AuthController@checkVerifyCode')->name("check_
 Route::post('testSaveFile', 'UserController@testSaveFile');
 Route::post('testDeleteFile', 'UserController@testDeleveFile');
 
-Route::get('messages', 'ChatController@fetchAllMessages');
-Route::post('messages', 'ChatController@sendMessage');
+
+
 
 Route::post('post/add', 'PostController@addPost');
 Route::get('post/{id}', 'PostController@getPost');
