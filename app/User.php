@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enums\FriendStatus;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -49,9 +50,73 @@ class User extends Authenticatable
         return $this->hasMany(Chat::class, 'user_a_id');
     }
 
+    public function getFriends()
+    {
+        $friendsInfo = Friends::where([
+            ["user_id", $this->id],
+            ["status", FriendStatus::ACCEPTED]
+        ])->orWhere([
+            ["friend_id", $this->id],
+            ["status", FriendStatus::ACCEPTED]
+        ])->get();
+        $friends = [];
+        foreach ($friendsInfo as $friendInfo) {
+            if ($friendInfo["user_id"] == $this->id) {
+                $user = User::find($friendInfo["friend_id"]);
+                if ($user != null)
+                    array_push($friends, $user);
+            } else if ($friendInfo["friend_id"] == $this->id) {
+                $user = User::find($friendInfo["user_id"]);
+                if ($user != null)
+                    array_push($friends, $user);
+            }
+        }
+        return $friends;
+    }
+
+    public function getFriendRequest()
+    {
+        $friendsInfo =  Friends::where("user_id", $this->id)
+            ->where('status', FriendStatus::REQUESTED)->get();
+        $friends = [];
+        foreach ($friendsInfo as $friendInfo) {
+            $user = User::find($friendInfo->friend_id);
+            if ($user != null)
+                array_push($friends, $user);
+        }
+        return $friends;
+    }
+
+    public function getSameFriends($user_id)
+    {
+        $myFriends = $this->getFriends();
+        $otherUser = User::find($user_id);
+        if ($otherUser == null) return 0;
+        else {
+            $hisFriends = $otherUser->getFriends();
+            $count = 0;
+            foreach ($myFriends as $myFriend) {
+                foreach ($hisFriends as $hisFriend) {
+                    if ($myFriend->id == $hisFriend->id) $count += 1;
+                }
+            }
+            return $count;
+        }
+    }
+
     public function messagesReceive()
     {
         return $this->hasMany(Chat::class, 'user_b_id');
+    }
+
+    public function setting()
+    {
+        return $this->hasOne(Settings::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 
     public function devices()

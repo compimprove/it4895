@@ -15,10 +15,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::post('/user/settings', "SettingsController@setPushSetting")->name("set_push_settings");
+    Route::get('/user/notifications', "UserController@getNotifications")->name("get_notifications");
+    Route::post('/user/notifications', "UserController@setReadNotification")->name("set_read_notification");
+    Route::get('/user/settings', "SettingsController@getPushSetting")->name("get_push_settings");
+    Route::get('/user/requested-friends', "UserController@getRequestedFriends")->name("get_requested_friends");
+    Route::post('/user/requested-friends', "UserController@setRequestFriends")->name("set_request_friend");
+    Route::get('/user/friends', "UserController@getFriends")->name("get_user_friends");
+    Route::get('/user/suggested-friends', "UserController@getSuggestedFriends")->name("get_list_suggested_friends");
+    Route::post('/user/friends', "UserController@setFriends")->name("set_accept_friend");
     Route::post("/logout", 'AuthController@logout');
     Route::post("/change-password", "AuthController@changePassword");
     Route::post("/device", "DeviceController@setDeviceInfo");
@@ -34,10 +43,6 @@ Route::post('register', 'AuthController@register');
 Route::post('check-verify-code', 'AuthController@checkVerifyCode')->name("check_verify_code");
 Route::post('testSaveFile', 'UserController@testSaveFile');
 Route::post('testDeleteFile', 'UserController@testDeleveFile');
-
-
-
-
 Route::post('post/add', 'PostController@addPost');
 Route::get('post/{id}', 'PostController@getPost');
 Route::get('post/delete/{id}', 'PostController@deletePost');
