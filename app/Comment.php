@@ -8,13 +8,16 @@ class Comment extends Model
 {
     protected $table = 'comments';
     protected $fillable = [
-        'id', 'user_id', 'post_id','content'
+        'id', 'user_id', 'post_id', 'content'
     ];
 
-    public function posts() {
-   		return $this->belongsTo('App\Post');
+    public function posts()
+    {
+        return $this->belongsTo('App\Post');
     }
-    public function users() {
+    public function users()
+    {
         return $this->belongsTo('App\User');
- }
+    }
 }
+

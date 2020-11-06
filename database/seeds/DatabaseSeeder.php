@@ -2,6 +2,7 @@
 
 use App\Chat;
 use App\Comment;
+use App\Notification;
 use App\Post;
 use App\User;
 use Illuminate\Database\Seeder;
@@ -16,39 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $user = new User();
-        $user->email = 'admin1@gmail.com';
-        $user->name = 'Admin1';
-        $user->phone_number = '0987654321';
-        $user->password = Hash::make('123456');
-        $user->save();
-        $user = new User();
-        $user->email = 'admin2@gmail.com';
-        $user->name = 'Admin2';
-        $user->phone_number = '0987654322';
-        $user->password = Hash::make('123456');
-        $user->save();
-        $chats = factory(Chat::class, 5)->make([
-            "user_a_id" => 1,
-            "user_b_id" => 2
+        $this->call([
+            UserSeeder::class,
+            ChatSeeder::class,
         ]);
-        foreach ($chats as $chat) {
-            $chat->save();
-        }
-        $chats = factory(Chat::class, 5)->make([
-            "user_a_id" => 2,
-            "user_b_id" => 1
-        ]);
-        foreach ($chats as $chat) {
-            $chat->save();
-        }
-        $user = new User();
-        $user->email = 'admin3@gmail.com';
-        $user->name = 'Admin3';
-        $user->phone_number = '0987654323';
-        $user->password = Hash::make('123456');
-        $user->is_blocked = true;
-        $user->save();
         $posts = factory(Post::class, 15)->make();
         foreach ($posts as $post) {
             $post->save();
@@ -57,5 +29,6 @@ class DatabaseSeeder extends Seeder
         foreach ($comments as $comment) {
             $comment->save();
         }
+        factory(Notification::class, 50)->create();
     }
 }
