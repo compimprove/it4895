@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Block;
 use App\Enums\ApiStatusCode;
 use App\Enums\FriendStatus;
 use App\Friends;
@@ -223,7 +224,6 @@ class UserController extends Controller
 
     public function getInfo(Request $request, $id)
     {
-
         $user = User::find($id);
         if ($user == null) {
             return [
@@ -397,6 +397,73 @@ class UserController extends Controller
                     "avatar" => Storage::url($linkAvatar),
                 ]
             ];
+        }
+    }
+
+    public function getBlock(Request $request)
+    {
+        $user = $request->user();
+        $blocks = Block::select("blocker_id")->where("user_id", $user->id)->get();
+        $blocks = array_map(function ($item) {
+            $user = User::find($item["blocker_id"]);
+            if ($user != null && !$user->is_blocked) {
+                return [
+                    "id" => $user->id,
+                    "name" => $user->name,
+                    "avatar" => $user->avatar
+                ];
+            }
+        }, $blocks->toArray());
+        return [
+            "code" => 1000,
+            "message" => "OK",
+            "data" => $blocks
+        ];
+    }
+
+    public function setBlock(Request $request, $user_id)
+    {
+        $validator = Validator::make($request->all(), [
+            "type" => "required|numeric"
+        ]);
+        if ($validator->fails()) {
+            return [
+                "code" => 1003,
+                "message" => "Parameter type is invalid",
+                "data" => $validator->errors()
+            ];
+        } else {
+            $type = (int)$request["type"];
+            $user_id = (int) $user_id;
+            if ($type != 0 && $type != 1) {
+                return [
+                    "code" => 1003,
+                    "message" => "Trường Type có giá trị sai"
+                ];
+            } else if (!User::find($user_id) || User::find($user_id)->isBlocked()) {
+                return [
+                    "code" => 1003,
+                    "message" => "User với id " . $user_id . " đã bị khóa hoặc không tồn tại"
+                ];
+            } else {
+                $block = Block::where("blocker_id", $user_id)
+                    ->where("user_id", $request->user()->id)->get();
+                if (!$block->isEmpty()) {
+                    if ($type == 1) {
+                        $block[0]->delete();
+                    }
+                } else {
+                    $block = new Block([
+                        "blocker_id" => $user_id,
+                        "user_id" => $request->user()->id
+                    ]);
+                    $block->save();
+                }
+                return [
+                    "code" => ApiStatusCode::OK,
+                    "message" => "OK"
+                ];
+            }
         }
     }
 

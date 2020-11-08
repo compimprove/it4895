@@ -31,11 +31,17 @@ Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
     Route::post("/logout", 'AuthController@logout');
     Route::post("/change-password", "AuthController@changePassword");
     Route::post("/device", "DeviceController@setDeviceInfo");
+    Route::get("user/block", "UserController@getBlock")->name("get_list_blocks");
     Route::get("/user/{id}", "UserController@getInfo");
     Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
     Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");
     Route::get('messages/{userId2}', 'ChatController@fetchAllMessages');
     Route::post('messages/{userId2}', 'ChatController@sendMessage');
+    Route::post('report/{id}', 'UserReportPostController@reportPost')->name("report_post");
+    Route::post('like/add/{post_id}', 'UserLikePostController@likePost')->name("like_post");
+    Route::get('comment/{id}', 'CommentController@getComment')->name("get_comment");
+    Route::post('comment/add/{id}', 'CommentController@addComment')->name("set_comment");
+    Route::post("user/block/{user_id}", "UserController@setBlock")->name("set_block");
 });
 
 Route::post('login', 'AuthController@getToken');
@@ -49,12 +55,8 @@ Route::get('post/delete/{id}', 'PostController@deletePost');
 //Route::post('post/addComment/{id}','PostController@addComment');
 
 
-Route::post('comment/add/{id}','CommentController@addComment');
-Route::get('comment/{id}','CommentController@getComment');
-Route::get('comment/delete/{id}','CommentController@deleteComment');
 
-Route::post('like/add/{user_id}/{post_id}','UserLikePostController@likePost');
-Route::get('like/{id}','UserLikePostController@getlikePost');
+
+Route::get('comment/delete/{id}', 'CommentController@deleteComment');
+Route::get('like/{id}', 'UserLikePostController@getlikePost');
 //Route::get('dislike/{id}','UserLikePostController@dislikePost');
-
-Route::post('report/{id}','UserReportPostController@reportPost');

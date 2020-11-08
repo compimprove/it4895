@@ -17,7 +17,7 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->integer("user_id");
             $table->text("content");
-            $table->integer("like");
+            $table->integer("like")->default(0);
             $table->string("image_link");
             $table->string("video_link");
             $table->timestamps();
