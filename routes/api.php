@@ -40,3 +40,7 @@ Route::post('messages', 'ChatController@sendMessage');
 Route::post('post/add', 'PostController@addPost');
 Route::get('post/{id}', 'PostController@getPost');
 Route::get('post/delete/{id}', 'PostController@deletePost');
+
+Route::post('search', 'SearchController@search');
+Route::post('get_saved_search', 'SearchController@getSavedSearch');
+Route::post('del_saved_search', 'SearchController@delSavedSearch');
