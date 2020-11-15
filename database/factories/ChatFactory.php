@@ -7,6 +7,6 @@ use Faker\Generator as Faker;
 
 $factory->define(Chat::class, function (Faker $faker) {
     return [
-        //
+        "content" => $faker->sentence()
     ];
 });

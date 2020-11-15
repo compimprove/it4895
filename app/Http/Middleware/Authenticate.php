@@ -13,7 +13,10 @@ class Authenticate extends Middleware
     {
         $this->authenticate($request, $guards);
         if ($request->user() == null) {
-            return response('', Response::HTTP_UNAUTHORIZED);
+            return response([
+                "code" => 1004,
+                "message" => "User is unauthorized"
+            ]);
         } else {
             return $next($request);
         }

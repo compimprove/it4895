@@ -18,6 +18,7 @@ class CreateChatsTable extends Migration
             $table->integer('user_a_id');
             $table->integer('user_b_id');
             $table->text('content');
+            $table->boolean('has_read')->default(false);
             $table->timestamps();
         });
     }

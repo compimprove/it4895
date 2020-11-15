@@ -1,5 +1,9 @@
 <?php
 
+use App\Chat;
+use App\Comment;
+use App\Notification;
+use App\Post;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -13,15 +17,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $user = new User();
-        // $user->email = 'admin1@gmail.com';
-        // $user->name = 'Admin1';
-        // $user->password = Hash::make('123456');
-        // $user->save();
-        // $user = new User();
-        // $user->email = 'admin2@gmail.com';
-        // $user->name = 'Admin2';
-        // $user->password = Hash::make('123456');
-        // $user->save();
+        $this->call([
+            UserSeeder::class,
+            ChatSeeder::class,
+        ]);
+        $posts = factory(Post::class, 15)->make();
+        foreach ($posts as $post) {
+            $post->save();
+        }
+        $comments = factory(Comment::class, 20)->make();
+        foreach ($comments as $comment) {
+            $comment->save();
+        }
+        factory(Notification::class, 50)->create();
     }
 }
