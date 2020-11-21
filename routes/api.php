@@ -24,7 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("/device", "DeviceController@setDeviceInfo");
     Route::get("/user/{id}", "UserController@getInfo");
     Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
-    Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");
+    Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");       
+    Route::post('post/add', 'PostController@addPost');
+    Route::post('post/{id}/edit', 'PostController@editPost');
+    Route::get('post/{id}', 'PostController@getPost');
+    Route::get('post/delete/{id}', 'PostController@deletePost');
 });
 
 
@@ -38,7 +42,3 @@ Route::post('testDeleteFile', 'UserController@testDeleveFile');
 Route::get('messages', 'ChatController@fetchAllMessages');
 Route::post('messages', 'ChatController@sendMessage');
 
-Route::post('post/add', 'PostController@addPost');
-Route::post('post/{id}/edit', 'PostController@editPost');
-Route::get('post/{id}', 'PostController@getPost');
-Route::get('post/delete/{id}', 'PostController@deletePost');
