@@ -33,10 +33,12 @@ Route::post('register', 'AuthController@register');
 Route::post('check-verify-code', 'AuthController@checkVerifyCode')->name("check_verify_code");
 Route::post('testSaveFile', 'UserController@testSaveFile');
 Route::post('testDeleteFile', 'UserController@testDeleveFile');
+	Route::get('test', 'PostController@test');
 
 Route::get('messages', 'ChatController@fetchAllMessages');
 Route::post('messages', 'ChatController@sendMessage');
 
 Route::post('post/add', 'PostController@addPost');
+Route::post('post/{id}/edit', 'PostController@editPost');
 Route::get('post/{id}', 'PostController@getPost');
 Route::get('post/delete/{id}', 'PostController@deletePost');
