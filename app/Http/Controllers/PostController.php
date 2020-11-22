@@ -12,14 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    public function test(Request $request) {
-
-        $user = $request->user();
-        return response()->json([
-            'data' => $id
-        ]);
-    }
-
     public function addPost(Request $request) {
 
     	$validator = Validator::make($request->all(), [
@@ -68,35 +60,38 @@ class PostController extends Controller
 			}
 		}
     	
+        $user = $request->user();
 		$post = new Post([
-            'user_id' => 1,
-            'content' => $request['described'],
+            'user_id' => $user->id,
+            'described' => $request['described'],
             'like' => 0
         ]);
 
         if ($post->save()) {
 			// nếu không có file nào vi phạm validate thì tiến hành lưu DB
-			if($exe_flg) {
-				$i = 1;
-				foreach ($request->file('image') as $image) {
-					$image->storeAs('image', $image->getClientOriginalName());
-					// $filename = $image->getClientOriginalName(); 
-					
-		        	$saveImage = new Image([
-			        	'post_id' => $post->id,
-			        	'link' => $image->getClientOriginalName(),
-			        	'image_sort' => $i
-			        ]);
-			        if ( $saveImage->save() ) {
-			        	$i++;
-			        } else {
-			        	return response()->json([
-			        		'code' => ApiStatusCode::LOST_CONNECT,
-			    			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
-			    		]);
-			        }
-				}
-			}
+            if($request->hasFile('image')) {
+    			if($exe_flg) {
+    				$i = 1;
+    				foreach ($request->file('image') as $image) {
+    					$image->storeAs('image', $image->getClientOriginalName());
+    					// $filename = $image->getClientOriginalName(); 
+    					
+    		        	$saveImage = new Image([
+    			        	'post_id' => $post->id,
+    			        	'link' => $image->getClientOriginalName(),
+    			        	'image_sort' => $i
+    			        ]);
+    			        if ( $saveImage->save() ) {
+    			        	$i++;
+    			        } else {
+    			        	return response()->json([
+    			        		'code' => ApiStatusCode::LOST_CONNECT,
+    			    			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
+    			    		]);
+    			        }
+    				}
+    			}
+            }
 
         	return response()->json(
         		[
@@ -165,7 +160,7 @@ class PostController extends Controller
             }
         }
         
-        $post_id = $request->id;
+        $post_id = $request->query('id');
         $post = Post::where('id', $post_id)->first();
 
         //==== Kết thúc nếu bài viết không tồn tại ====//
@@ -227,9 +222,17 @@ class PostController extends Controller
         );
     }
 
-    public function getPost($id) {
-    	$post = Post::where('id', $id)->first();
-    	// $images = Image::where('post_id', $post->id)->get(['id', 'link']);
+    public function getPost(Request $request) {
+
+        $post_id = $request->query('id');
+    	$post = Post::where('id', $post_id)->first();
+
+        if (!$post) {
+            return response()->json([
+                'code' => ApiStatusCode::NOT_EXISTED, 
+                'message' => 'Bài viết không tồn tại',
+            ]);
+        }
         $images = $post->images;
     	$user = User::where('id', $post->user_id)->first();
 
@@ -238,7 +241,7 @@ class PostController extends Controller
     		'message' => 'Lấy bài viết thành công',
     		'data' => [
     			'id' => $post->id,
-    			'described' => $post->content,
+    			'described' => $post->described,
     			'created' => $post->created_at,
     			'modified' => $post->updated_at,
     			'like' => $post->like
@@ -248,8 +251,17 @@ class PostController extends Controller
     	]);
     }
 
-    public function deletePost($id) {
-    	$post = Post::where('id', $id)->first();
+    public function deletePost(Request $request) {
+
+        $post_id = $request->query('id');
+    	$post = Post::where('id', $post_id)->first();
+
+        if (!$post) {
+            return response()->json([
+                'code' => ApiStatusCode::NOT_EXISTED, 
+                'message' => 'Bài viết không tồn tại',
+            ]);
+        }
 
     	if($post->delete()) {
     		return response()->json([
@@ -257,5 +269,54 @@ class PostController extends Controller
     			'message' => 'Xóa bài viết thành công'
     		]);
     	}
+    }
+
+    public function getListPost(Request $request) {
+        $token = $request->query('token');
+        $user_id = $request->query('user_id');
+        $in_campaign = $request->query('in_campaign');
+        $campaign_id = $request->query('campaign_id');
+        $latitude = $request->query('latitude');
+        $longtitude = $request->query('longtitude');
+        $last_id = $request->query('last_id');
+        $index = $request->query('index');
+        $count = $request->query('count');
+
+        $list_posts = Post::where('id', '>', $last_id)
+                        ->orderBy('id', 'desc')
+                        ->limit($count)
+                        ->get();                        
+        $new_last_id = $list_posts->first()->id;
+
+        return response()->json([
+            'code' => ApiStatusCode::OK,
+            'message' => 'Lấy danh sách bài viết thành công',
+            'data' => [
+                'posts' => $list_posts,
+            ],
+            'last_id' => $new_last_id,
+        ]);
+    }
+
+    public function checkNewItem(Request $request) {
+        $last_id = $request->query('last_id');
+        $category_id = $request->query('category_id');
+
+        $list_posts = Post::where('id', '>', $last_id)
+                        ->orderBy('id', 'desc')
+                        ->get();
+        $new_last_id = $list_posts->first()->id;
+
+
+        if($list_posts) {           
+            return response()->json([
+                'code' => ApiStatusCode::OK,
+                'message' => 'Lấy danh sách bài viết mới thành công',
+                'data' => [
+                    'news_items' => $list_posts->count(),
+                ],
+                'last_id' => $new_last_id,
+            ]);   
+        } 
     }
 }

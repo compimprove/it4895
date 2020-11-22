@@ -25,10 +25,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/user/{id}", "UserController@getInfo");
     Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
     Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");       
-    Route::post('post/add', 'PostController@addPost');
-    Route::post('post/{id}/edit', 'PostController@editPost');
-    Route::get('post/{id}', 'PostController@getPost');
-    Route::get('post/delete/{id}', 'PostController@deletePost');
+    Route::get('add_post', 'PostController@addPost');
+    Route::get('edit_post', 'PostController@editPost');
+    Route::get('get_post', 'PostController@getPost');
+    Route::get('delete_post', 'PostController@deletePost');
+    Route::get('get_list_posts', 'PostController@getListPost');
+    Route::get('check_new_item', 'PostController@checkNewItem');
 });
 
 
