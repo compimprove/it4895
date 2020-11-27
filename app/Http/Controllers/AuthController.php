@@ -14,8 +14,9 @@ class AuthController extends Controller
 {
     public function getToken(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'phone_number' => 'required|digits:10',
+
+        $validator = Validator::make($request->query(), [
+            'phonenumber' => 'required|digits:10',
             'password' => 'required|string|max:10|min:6',
             'uuid' => 'required|uuid'
         ]);
@@ -26,8 +27,10 @@ class AuthController extends Controller
                 "data" => $validator->errors()
             ];
         }
-        $user = User::where('phone_number', $request["phone_number"])->first();
-        if ($this->checkPasswordCorrect($user, $request->password)) {
+        $phoneNumber = $request->query("phonenumber");
+        $password = $request->query("password");
+        $user = User::where('phone_number', $phoneNumber)->first();
+        if ($this->checkPasswordCorrect($user, $password)) {
             $user->tokens()->delete();
             return [
                 "code" => 1000,
@@ -54,13 +57,20 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $data = [];
+        $data["phone_number"] = $request->query("phonenumber");
+        $data["password"] = $request->query("password");
+        $data["uuid"] = $request->query("uuid");
+        $data["name"] = $request->query("name");
+        $data["email"] = $request->query("email");
+
+        $validator = Validator::make($data, [
             'phone_number' => 'required|unique:users|digits:10',
             'password' => 'required|string|max:10|min:6',
             'uuid' => 'required'
         ]);
         if ($validator->fails()) {
-            $phoneUniqueValidator = Validator::make($request->all(), [
+            $phoneUniqueValidator = Validator::make($data, [
                 'phone_number' => 'required|unique:users'
             ]);
             if ($phoneUniqueValidator->fails()) {
@@ -77,11 +87,11 @@ class AuthController extends Controller
             }
         }
         $user = User::makeUser([
-            "phone_number" => $request["phone_number"],
-            "password" => $request["password"],
-            "uuid" => $request["uuid"],
-            "name" => $request["name"],
-            "email" => $request["email"]
+            "phone_number" => $data["phone_number"],
+            "password" => $data["password"],
+            "uuid" => $data["uuid"],
+            "name" => $data["name"],
+            "email" => $data["email"]
         ]);
         $user->save();
         return [

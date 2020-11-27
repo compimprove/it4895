@@ -123,6 +123,12 @@
                     </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Sum</th>
+                        <th>{{count($allApiName)}}</th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 
