@@ -16,7 +16,7 @@ class UserReportPostController extends Controller
     public function reportPost(Request $request, $id)
     {
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             'described' => 'required'
         ]);
         if ($validator->fails()) {
@@ -26,7 +26,7 @@ class UserReportPostController extends Controller
                 'data' => $validator->errors()
             ]);
         } else {
-            $validator = Validator::make($request->all(), [
+            $validator = Validator::make($request->query(), [
                 'described' => 'string',
             ]);
 
@@ -42,7 +42,7 @@ class UserReportPostController extends Controller
         $report = new UserReportPost([
             'user_id' => $user_id,
             'post_id' => $id,
-            'description' => $request['described'],
+            'description' => $request->query("described"),
             'type' => 1
         ]);
 
@@ -54,7 +54,7 @@ class UserReportPostController extends Controller
                     'data' => [
                         'post_id' => $id,
                         'user_id' => $user_id,
-                        'description' => $request['described']
+                        'description' => $request->query("described")
 
                     ]
 

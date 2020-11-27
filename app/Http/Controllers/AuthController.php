@@ -109,7 +109,7 @@ class AuthController extends Controller
                 "message" => "User is not validated"
             ];
         }
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             'password' => 'required|string|max:10|min:6',
             'new_password' => 'required|string|max:10|min:6'
         ]);
@@ -119,13 +119,13 @@ class AuthController extends Controller
                 "message" => "Parameter type is invalid",
                 "data" => $validator->errors()
             ];
-        } else if (!$this->checkPasswordCorrect($user, $request['password'])) {
+        } else if (!$this->checkPasswordCorrect($user, $request->query("password"))) {
             return [
                 "code" => 1003,
                 "message" => "Old password is not correct"
             ];
         } else {
-            $user->changePassword($request["new_password"]);
+            $user->changePassword($request->query("new_password"));
             $user->save();
             return [
                 "code" => 1000,
@@ -145,12 +145,12 @@ class AuthController extends Controller
 
     public function checkVerifyCode(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'phone_number' => 'required|digits:10',
+        $validator = Validator::make($request->query(), [
+            'phonenumber' => 'required|digits:10',
             'code_verify' => 'required',
         ]);
         if ($validator->fails()) {
-            if (Validator::make($request->all(), [
+            if (Validator::make($request->query(), [
                 'code_verify' => 'required',
             ])->fails()) {
                 return [
@@ -165,7 +165,7 @@ class AuthController extends Controller
                 ];
             }
         } else {
-            $user = User::where("phone_number", $request["phone_number"])->first();
+            $user = User::where("phone_number",$request->query("phonenumber"))->first();
             if ($user == null) {
                 return [
                     "code" => 1004,

@@ -82,7 +82,6 @@ class UserController extends Controller
                     "created" => $item->created_at,
                 ]);
             };
-            $result;
             return [
                 "code" => ApiStatusCode::OK,
                 "message" => "OK",
@@ -313,7 +312,7 @@ class UserController extends Controller
     public function setUserInfo(Request $request)
     {
         $user = $request->user();
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             'username' => 'string',
             "description" => "string|max:150",
             'avatar' => 'file|max:1024',
@@ -340,12 +339,12 @@ class UserController extends Controller
             $user->avatar = $linkAvatar;
             $linkCoverImage = $this->fileService->saveFile($request->file("cover_image"));
             $user->cover_image = $linkCoverImage;
-            $user["name"] = $request["username"];
-            $user["description"] = $request["description"];
-            $user["address"] = $request["address"];
-            $user["city"] = $request["city"];
-            $user["country"] = $request["country"];
-            $user["link"] = $request["link"];
+            $user["name"] = $request->query("username");
+            $user["description"] = $request->query("description");
+            $user["address"] = $request->query("address");
+            $user["city"] = $request->query("city");
+            $user["country"] = $request->query("country");
+            $user["link"] = $request->query("link");
             $user->save();
             return [
                 "code" => 1000,
@@ -364,7 +363,7 @@ class UserController extends Controller
     public function changeInfoAfterSignup(Request $request)
     {
         $user = $request->user();
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             'username' => 'required|string',
             'avatar' => 'file|max:1024',
         ]);
@@ -373,14 +372,14 @@ class UserController extends Controller
                 "code" => 1006,
                 "message" => "File Too Large",
             ];
-        } else if (strcmp($user->phone_number, $request["username"]) == 0) {
+        } else if (strcmp($user->phone_number, $request->query("username")) == 0) {
             return [
                 "code" => 1004,
                 "message" => "User name is invalid",
             ];
         } else {
             $linkAvatar = $this->fileService->saveFile($request->file("avatar"));
-            $user->name = $request["username"];
+            $user->name = $request->query("username");
             if ($user->avatar != null) {
                 $this->fileService->deleteFile($user->avatar);
             };
@@ -423,7 +422,7 @@ class UserController extends Controller
 
     public function setBlock(Request $request, $user_id)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             "type" => "required|numeric"
         ]);
         if ($validator->fails()) {
@@ -433,7 +432,7 @@ class UserController extends Controller
                 "data" => $validator->errors()
             ];
         } else {
-            $type = (int)$request["type"];
+            $type = (int)$request->query("type");
             $user_id = (int) $user_id;
             if ($type != 0 && $type != 1) {
                 return [
