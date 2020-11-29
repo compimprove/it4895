@@ -8,6 +8,7 @@ use App\Events\ChatEvent;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
@@ -39,7 +40,7 @@ class ChatController extends Controller
         $partnerId = $request->query("partner_id");
         $index = $request->query("index");
         $count = $request->query("count");
-        if ($index == '' || $count == '') {
+        if ($index == '' || $count == '' || $partnerId == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "PARAMETER TYPE INVALID"
@@ -47,16 +48,17 @@ class ChatController extends Controller
         }
         $count = (int)$count;
         $index = (int)$index;
+        $partnerId = (int) $partnerId;
         $chats = Chat::getMessagesFromOneToOne($request->user()->id, $partnerId);
         $chats = array_slice($chats, $count * $index, $count);
         $partner = User::find($partnerId);
         $conversations = [];
         foreach ($chats as $chat) {
             array_push($conversations, [
-                "message" => $chat["content"],
-                "message_id" => $chat["id"],
-                "unread" => $chat["has_read"] ? 0 : 1,
-                "created" => $chat["created_at"],
+                "message" => $chat->content,
+                "message_id" => $chat->id,
+                "unread" => $chat->has_read ? 0 : 1,
+                "created" => $chat->created_at,
                 "sender" => [
                     "id" => $partner["id"],
                     "username" => $partner["name"],
@@ -76,6 +78,16 @@ class ChatController extends Controller
 
     public function getListConversation(Request $request)
     {
+        $index = $request->query("index");
+        $count = $request->query("count");
+        if ($index == '' || $count == '') {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "PARAMETER TYPE INVALID"
+            ];
+        }
+        $count = (int)$count;
+        $index = (int)$index;
         $data = [];
         $userId = $request->user()->id;
         $allPartnersID = Chat::getAllPartner($userId);
@@ -97,6 +109,7 @@ class ChatController extends Controller
                 ]
             ]);
         }
+        $data = array_slice($data, $count * $index, $count);
         $numberNewMessage = DB::table('chats')
             ->where('has_read', '=', false)
             ->where('user_a_id', '=', $userId)
@@ -136,11 +149,20 @@ class ChatController extends Controller
                 "message" => "Conversation not found"
             ];
         }
-        return [
-            "code" => ApiStatusCode::OK,
-            "message" => "OK",
-            "data" => $chat->content,
-        ];
+        if ($chat->belongTo($request->user()->id, $partnerId)) {
+            $chat->has_read = true;
+            $chat->save();
+            return [
+                "code" => ApiStatusCode::OK,
+                "message" => "OK",
+                "data" => $chat->content,
+            ];
+        } else {
+            return [
+                "code" => ApiStatusCode::NOT_EXISTED,
+                "message" => "Tin nhắn Id ".$chatId." không thuộc của userId ".$request->user()->id." và userId ".$partnerId
+            ];
+        }
     }
 
     public function deleteMessage(Request $request)
@@ -162,14 +184,23 @@ class ChatController extends Controller
                 "message" => "Conversation not found"
             ];
         }
-        $chat->delete();
-        return [
-            "code" => ApiStatusCode::OK,
-            "message" => "OK"
-        ];
+        if ($chat->belongTo($request->user()->id, $partnerId)) {
+            $chat->delete();
+            return [
+                "code" => ApiStatusCode::OK,
+                "message" => "OK"
+            ];
+        } else {
+            return [
+                "code" => ApiStatusCode::NOT_EXISTED,
+                "message" => "Tin nhắn Id ".$chatId." không thuộc của userId ".$request->user()->id." và userId ".$partnerId
+            ];
+        }
+
     }
 
-    public function deleteConversation(Request $request) {
+    public function deleteConversation(Request $request)
+    {
         $partnerId = $request->query("partner_id");
         $chatId = $request->query("conversation_id");
         if ($partnerId == '' || $chatId == '') {
@@ -194,10 +225,18 @@ class ChatController extends Controller
                 "message" => "Conversation not found"
             ];
         }
-        Chat::deleteMessages($request->user()->id, $partnerId);
-        return [
-            "code" => ApiStatusCode::OK,
-            "message" => "OK"
-        ];
+        if ($chat->belongTo($request->user()->id, $partnerId)) {
+            Chat::deleteMessages($request->user()->id, $partnerId);
+            return [
+                "code" => ApiStatusCode::OK,
+                "message" => "OK"
+            ];
+        } else {
+            return [
+                "code" => ApiStatusCode::NOT_EXISTED,
+                "message" => "Tin nhắn Id ".$chatId." không thuộc của userId ".$request->user()->id." và userId ".$partnerId
+            ];
+        }
+
     }
 }

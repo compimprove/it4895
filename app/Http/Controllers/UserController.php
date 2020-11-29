@@ -34,8 +34,8 @@ class UserController extends Controller
         } else {
             $user = $request->user();
             $result = [];
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $requestedFriends = $user->getFriendRequest();
             foreach ($requestedFriends as $item) {
                 array_push($result, [
@@ -70,8 +70,8 @@ class UserController extends Controller
         } else {
             $user = $request->user();
             $result = [];
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $requestedFriends = array_slice($user->getFriends(), $count * $index, $count);
             foreach ($requestedFriends as $item) {
                 array_push($result, [
@@ -106,8 +106,8 @@ class UserController extends Controller
             $user = $request->user();
             $result = [];
             $suggestedFriends = [];
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $friends = $request->user()->getFriends();
             foreach ($friends as $friend) {
                 $suggestedFriends = array_merge($suggestedFriends, $friend->getFriends());
@@ -137,7 +137,7 @@ class UserController extends Controller
     {
         $user_id = $request->query("user_id");
         $user = $request->user();
-        if ($user_id == '' || $user->id == (int) $user_id || (int) $user_id < 0) {
+        if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "PARAMETER TYPE INVALID"
@@ -148,7 +148,7 @@ class UserController extends Controller
                 "message" => "User friend is max"
             ];
         } else {
-            $requestedFriend = User::find((int) $user_id);
+            $requestedFriend = User::find((int)$user_id);
             if ($requestedFriend == null) {
                 return [
                     "code" => ApiStatusCode::NOT_EXISTED,
@@ -156,11 +156,11 @@ class UserController extends Controller
                 ];
             } else {
                 $relation = Friends::where("user_id", $user->id)
-                    ->where("friend_id", (int) $user_id)->get();
+                    ->where("friend_id", (int)$user_id)->get();
                 if ($relation->isEmpty()) {
                     Friends::create([
                         "user_id" => $user->id,
-                        "friend_id" => (int) $user_id,
+                        "friend_id" => (int)$user_id,
                         "status" => FriendStatus::REQUESTED
                     ]);
                 } else {
@@ -262,7 +262,7 @@ class UserController extends Controller
             ];
         } else {
             $user = $request->user();
-            $notificationId = (int) $notificationId;
+            $notificationId = (int)$notificationId;
             $notifs = Notification::where("user_id", $user->id)->where("id", $notificationId)->get();
             if ($notifs->isEmpty()) {
                 return [
@@ -291,8 +291,8 @@ class UserController extends Controller
             ];
         } else {
             $user = $request->user();
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $notifications = $user->notifications->toArray();
             $notifications = array_slice($notifications, $count * $index, $count);
             $notifications = array_map(function ($item) {
@@ -378,12 +378,16 @@ class UserController extends Controller
                 "message" => "User name is invalid",
             ];
         } else {
-            $linkAvatar = $this->fileService->saveFile($request->file("avatar"));
             $user->name = $request->query("username");
-            if ($user->avatar != null) {
-                $this->fileService->deleteFile($user->avatar);
-            };
-            $user->avatar = $linkAvatar;
+            if ($request->file("avatar") != null) {
+                $linkAvatar = $this->fileService->saveFile($request->file("avatar"));
+                if ($user->avatar != null) {
+                    $this->fileService->deleteFile($user->avatar);
+                };
+                $user->avatar = $linkAvatar;
+            } else {
+                $linkAvatar = "";
+            }
             $user->save();
             return [
                 "code" => 1000,
@@ -433,7 +437,7 @@ class UserController extends Controller
             ];
         } else {
             $type = (int)$request->query("type");
-            $user_id = (int) $user_id;
+            $user_id = (int)$user_id;
             if ($type != 0 && $type != 1) {
                 return [
                     "code" => 1003,
