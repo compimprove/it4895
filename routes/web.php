@@ -18,7 +18,9 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/chats', 'ChatController@index')->name('chat');
+Route::middleware('auth')->group(function () {
+    Route::get('/chats', 'ChatController@index')->name('chat');
+});
 
 Auth::routes();
 

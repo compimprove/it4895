@@ -2,11 +2,11 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Chat;
+use App\Settings;
 use Faker\Generator as Faker;
 
-$factory->define(Chat::class, function (Faker $faker) {
+$factory->define(Settings::class, function (Faker $faker) {
     return [
-        "content" => $faker->sentence()
+        //
     ];
 });

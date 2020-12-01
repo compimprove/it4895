@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Image;
+use App\Comment;
 use App\User;
 use App\Enums\ApiStatusCode;
 use App\Enums\URL;
@@ -12,47 +13,47 @@ use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    public function addPost(Request $request) {
+    public function addPost(Request $request)
+    {
 
-    	$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'described' => 'required'
         ]);
 
-    	if ($validator->fails()) {
-    		return response()->json([
-    			'code' => ApiStatusCode::PARAMETER_NOT_ENOUGH,
-    			'message' => 'Số lượng parameter không dầy đủ',
-    			'data' => $validator->errors()
-    		]);
-    	}
-    	else {
-    		$validator = Validator::make($request->all(), [
-	            'described' => 'string',
-	            'video' => 'string'
-	        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => ApiStatusCode::PARAMETER_NOT_ENOUGH,
+                'message' => 'Số lượng parameter không dầy đủ',
+                'data' => $validator->errors()
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'described' => 'string',
+                'video' => 'string'
+            ]);
 
-	        if ($validator->fails()) {
-	    		return response()->json([
-	    			'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-	    			'message' => 'Kiểu tham số không đúng đắn',
-	    			'data' => $validator->errors()
-	    		]);
-	    	}
-    	}
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                    'message' => 'Kiểu tham số không đúng đắn',
+                    'data' => $validator->errors()
+                ]);
+            }
+        }
 
-    	// kiểm tra xem có file ảnh không
-    	if($request->hasFile('image')) {
-   			$allowedfileExtension=['jpg','png'];
-			$files = $request->file('image');
+        // kiểm tra xem có file ảnh không
+        if ($request->hasFile('image')) {
+            $allowedfileExtension = ['jpg', 'png'];
+            $files = $request->file('image');
 
             // flag xem có thực hiện lưu DB không. Mặc định là có
-			$exe_flg = true;
-			// kiểm tra tất cả các files xem có đuôi mở rộng đúng không
-			foreach($files as $file) { 
-				$extension = $file->getClientOriginalExtension();
-				$check = in_array($extension,$allowedfileExtension);
+            $exe_flg = true;
+            // kiểm tra tất cả các files xem có đuôi mở rộng đúng không
+            foreach ($files as $file) {
+                $extension = $file->getClientOriginalExtension();
+                $check = in_array($extension, $allowedfileExtension);
 
-				if(!$check) {
+                if (!$check) {
                     // nếu có file nào không đúng đuôi mở rộng thì đổi flag thành false
 					$exe_flg = false;
 					break; 
@@ -262,13 +263,12 @@ class PostController extends Controller
                 'message' => 'Bài viết không tồn tại',
             ]);
         }
-
-    	if($post->delete()) {
-    		return response()->json([
-    			'code' => ApiStatusCode::OK,
-    			'message' => 'Xóa bài viết thành công'
-    		]);
-    	}
+        if ($post->delete()) {
+            return response()->json([
+                'code' => ApiStatusCode::OK,
+                'message' => 'Xóa bài viết thành công'
+            ]);
+        }
     }
 
     public function getListPost(Request $request) {
@@ -319,4 +319,69 @@ class PostController extends Controller
             ]);   
         } 
     }
+    // public function addComment(Request $request,$id) {
+
+    // 	$validator = Validator::make($request->all(), [
+    //         'described' => 'required'
+    //     ]);
+
+    // 	if ($validator->fails()) {
+    // 		return response()->json([
+    // 			'code' => ApiStatusCode::PARAMETER_NOT_ENOUGH,
+    // 			'message' => 'Số lượng parameter không dầy đủ',
+    // 			'data' => $validator->errors()
+    // 		]);
+    // 	}
+    // 	else {
+    // 		$validator = Validator::make($request->all(), [
+    //             'described' => 'string',
+
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //     		return response()->json([
+    //     			'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
+    //     			'message' => 'Kiểu tham số không đúng đắn',
+    //     			'data' => $validator->errors()
+    //     		]);
+    // 		}
+    // 		else {
+    // 			$post = Post::find($id);
+    // 			if ($post == null) {
+    // 				return [
+    // 					"code" => 9992,
+    // 					"message" => "Bài viết không tồn tại"
+    // 				];
+    // 		}
+    // 	}
+    // 	}
+    // 	$post = Post::find($id);
+    // 	$comment = new Comment([
+    //         'user_id'=>$post->user_id,
+    //         'post_id'=>$id,
+    //         'content' => $request['described'],
+
+    //     ]);
+
+    //     if ($comment->save()) {
+
+    //     	return response()->json(
+    //     		[
+    //     			'code' => ApiStatusCode::OK,
+    //     			'message' => 'Tạo comment thành công',
+    //     			'data' => [
+    // 					'user_id'=>$post->user_id,
+    //     				'post_id' => $id,
+    //     				'content'=>$request['described']
+    //     			]
+    //     		]
+    //     	);
+    //     }
+    //     else return response()->json(
+    //     	[
+    //     		'code' => ApiStatusCode::LOST_CONNECT,
+    // 			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
+    // 		]
+    //     );
+    // }
 }
