@@ -223,7 +223,13 @@ class UserController extends Controller
 
     public function getInfo(Request $request, $id)
     {
-        $user = User::find($id);
+        $user = $request->user();
+        if ($user->id != $id) {
+            return [
+                "code" => ApiStatusCode::NOT_VALIDATE,
+                "message" => "User is not validated"
+            ];
+        }
         if ($user == null) {
             return [
                 "code" => 9994,
@@ -363,14 +369,13 @@ class UserController extends Controller
     public function changeInfoAfterSignup(Request $request)
     {
         $user = $request->user();
-        $validator = Validator::make($request->query(), [
-            'username' => 'required|string',
+        $fileValidator = Validator::make($request->all(), [
             'avatar' => 'file|max:1024',
         ]);
-        if ($validator->fails()) {
+        if ($fileValidator->fails()) {
             return [
                 "code" => 1006,
-                "message" => "File Too Large",
+                "message" => "File size is too big",
             ];
         } else if (strcmp($user->phone_number, $request->query("username")) == 0) {
             return [

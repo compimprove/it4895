@@ -13,4 +13,5 @@ final class ApiStatusCode
     const PARAMETER_NOT_ENOUGH = 1002;
     const PARAMETER_TYPE_INVALID = 1003;
     const LOST_CONNECTED = 1001;
+    const NOT_VALIDATE = 9995;
 }

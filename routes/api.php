@@ -31,7 +31,7 @@ Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
     Route::post("/change-password", "AuthController@changePassword")->name("change_password");
     Route::post("/device", "DeviceController@setDeviceInfo")->name("set_devtoken");
     Route::get("user/block", "UserController@getBlock")->name("get_list_blocks");
-    Route::get("/user/{id}", "UserController@getInfo")->name("get_user_info");
+    Route::get("/user", "UserController@getInfo")->name("get_user_info");
     Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
     Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");
 

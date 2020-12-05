@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ApiStatusCode;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
@@ -27,9 +28,28 @@ class AuthController extends Controller
                 "data" => $validator->errors()
             ];
         }
+
         $phoneNumber = $request->query("phonenumber");
         $password = $request->query("password");
+        if ($phoneNumber == "" && $password == "") {
+            return [
+                "code" => ApiStatusCode::PARAMETER_NOT_ENOUGH,
+                "message" => "Parameter is not enough"
+            ];
+        }
+        if ($phoneNumber == $password || str_starts_with($phoneNumber, "0")) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        }
         $user = User::where('phone_number', $phoneNumber)->first();
+        if ($user == null) {
+            return [
+                "code" => 1004,
+                "message" => "Parameter value is invalid"
+            ];
+        }
         if ($this->checkPasswordCorrect($user, $password)) {
             $user->tokens()->delete();
             return [
@@ -44,7 +64,7 @@ class AuthController extends Controller
             ];
         } else {
             return [
-                "code" => 1003,
+                "code" => 1004,
                 "message" => "Password is not correct"
             ];
         }
@@ -59,7 +79,26 @@ class AuthController extends Controller
     {
         $data = [];
         $data["phone_number"] = $request->query("phonenumber");
+
         $data["password"] = $request->query("password");
+        if ($data["phone_number"] == "" && $data["password"] == "") {
+            return [
+                "code" => ApiStatusCode::PARAMETER_NOT_ENOUGH,
+                "message" => "Parameter is not enough"
+            ];
+        }
+        if ($data["phone_number"] == $data["password"]) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        }
+        if (str_starts_with($data["phone_number"], "0")) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        }
         $data["uuid"] = $request->query("uuid");
         $data["name"] = $request->query("name");
         $data["email"] = $request->query("email");
@@ -165,7 +204,7 @@ class AuthController extends Controller
                 ];
             }
         } else {
-            $user = User::where("phone_number",$request->query("phonenumber"))->first();
+            $user = User::where("phone_number", $request->query("phonenumber"))->first();
             if ($user == null) {
                 return [
                     "code" => 1004,
