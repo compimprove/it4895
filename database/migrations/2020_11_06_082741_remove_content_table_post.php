@@ -14,8 +14,8 @@ class RemoveContentTablePost extends Migration
     public function up()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn("content");
-            $table->text("described");
+//            $table->dropColumn("content");
+//            $table->text("described");
         });
     }
 
@@ -27,7 +27,7 @@ class RemoveContentTablePost extends Migration
     public function down()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->text("content");
+//            $table->text("content");
         });
     }
 }

@@ -18,7 +18,7 @@ class CreatePostsTable extends Migration
             $table->integer("user_id");
             $table->text("described");
             $table->integer("like")->default(0);
-            $table->string("status");
+            $table->string("status")->default("");
             $table->timestamps();
         });
     }

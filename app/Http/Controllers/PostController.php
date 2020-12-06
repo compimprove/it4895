@@ -27,7 +27,7 @@ class PostController extends Controller
                 'message' => 'Dung lượng file quá lớn',
                 'data' => $validator->errors()
             ]);
-        } 
+        }
 
         if( $request->hasFile('image') && $request->hasFile('video')) {
             return response()->json([
@@ -45,7 +45,7 @@ class PostController extends Controller
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 'message' => 'Video không đúng định dạng'
             ]);
-        } 
+        }
 
         // kiểm tra xem có file ảnh không
         if ($request->hasFile('image')) {
@@ -66,7 +66,7 @@ class PostController extends Controller
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                         'message' => 'File ảnh không đúng định dạng',
                     ]);
-				} 
+				}
 			}
 		}
 
@@ -88,10 +88,10 @@ class PostController extends Controller
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                         'message' => 'File video không đúng định dạng',
                     ]);
-                } 
+                }
             }
         }
-    	
+
         $user = $request->user();
 		$post = new Post([
             'user_id' => $user->id,
@@ -105,8 +105,8 @@ class PostController extends Controller
 				$i = 1;
 				foreach ($request->file('image') as $image) {
 					$image->storeAs('image', $image->getClientOriginalName());
-					// $filename = $image->getClientOriginalName(); 
-					
+					// $filename = $image->getClientOriginalName();
+
 		        	$saveImage = new Image([
 			        	'post_id' => $post->id,
 			        	'link' => $image->getClientOriginalName(),
@@ -116,7 +116,7 @@ class PostController extends Controller
 			        	$i++;
 			        } else {
 			        	return response()->json([
-			        		'code' => ApiStatusCode::LOST_CONNECT,
+			        		'code' => ApiStatusCode::LOST_CONNECTED,
 			    			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
 			    		]);
 			        }
@@ -127,15 +127,15 @@ class PostController extends Controller
                 $i = 1;
                 $video = $request->file('video');
                 $video->storeAs('video', $video->getClientOriginalName());
-                // $filename = $image->getClientOriginalName(); 
-                
+                // $filename = $image->getClientOriginalName();
+
                 $saveVideo = new Video([
                     'post_id' => $post->id,
                     'link' => $video->getClientOriginalName(),
                 ]);
                 if ( !$saveVideo->save() ) {
                     return response()->json([
-                        'code' => ApiStatusCode::LOST_CONNECT,
+                        'code' => ApiStatusCode::LOST_CONNECTED,
                         'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
                     ]);
                 }
@@ -154,7 +154,7 @@ class PostController extends Controller
         }
         else return response()->json(
         	[
-        		'code' => ApiStatusCode::LOST_CONNECT,
+        		'code' => ApiStatusCode::LOST_CONNECTED,
     			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
     		]
         );
@@ -173,7 +173,7 @@ class PostController extends Controller
                 'message' => 'Dung lượng file quá lớn',
                 'data' => $validator->errors()
             ]);
-        } 
+        }
 
         if( $request->hasFile('image') && $request->hasFile('video')) {
             return response()->json([
@@ -191,7 +191,7 @@ class PostController extends Controller
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 'message' => 'Video không đúng định dạng'
             ]);
-        } 
+        }
 
         // kiểm tra xem có file ảnh không
         if ($request->hasFile('image')) {
@@ -212,7 +212,7 @@ class PostController extends Controller
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                         'message' => 'File ảnh không đúng định dạng',
                     ]);
-                } 
+                }
             }
         }
 
@@ -234,10 +234,10 @@ class PostController extends Controller
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                         'message' => 'File video không đúng định dạng',
                     ]);
-                } 
+                }
             }
         }
-        
+
         $user = $request->user();
 
         $post = Post::where('id', $post_id)->first();
@@ -275,8 +275,8 @@ class PostController extends Controller
                 $i = 1;
                 foreach ($request->file('image') as $image) {
                     $image->storeAs('image', $image->getClientOriginalName());
-                    // $filename = $image->getClientOriginalName(); 
-                    
+                    // $filename = $image->getClientOriginalName();
+
                     $saveImage = new Image([
                         'post_id' => $post->id,
                         'link' => $image->getClientOriginalName(),
@@ -286,7 +286,7 @@ class PostController extends Controller
                         $i++;
                     } else {
                         return response()->json([
-                            'code' => ApiStatusCode::LOST_CONNECT,
+                            'code' => ApiStatusCode::LOST_CONNECTED,
                             'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
                         ]);
                     }
@@ -302,15 +302,15 @@ class PostController extends Controller
                 $i = 1;
                 $video = $request->file('video');
                 $video->storeAs('video', $video->getClientOriginalName());
-                // $filename = $image->getClientOriginalName(); 
-                
+                // $filename = $image->getClientOriginalName();
+
                 $saveVideo = new Video([
                     'post_id' => $post->id,
                     'link' => $video->getClientOriginalName(),
                 ]);
                 if ( !$saveVideo->save() ) {
                     return response()->json([
-                        'code' => ApiStatusCode::LOST_CONNECT,
+                        'code' => ApiStatusCode::LOST_CONNECTED,
                         'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
                     ]);
                 }
@@ -329,7 +329,7 @@ class PostController extends Controller
         }
         else return response()->json(
             [
-                'code' => ApiStatusCode::LOST_CONNECT,
+                'code' => ApiStatusCode::LOST_CONNECTED,
                 'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
             ]
         );
@@ -342,7 +342,7 @@ class PostController extends Controller
 
         if (!$post) {
             return response()->json([
-                'code' => ApiStatusCode::NOT_EXISTED, 
+                'code' => ApiStatusCode::NOT_EXISTED,
                 'message' => 'Bài viết không tồn tại',
             ]);
         }
@@ -351,7 +351,7 @@ class PostController extends Controller
     	$user = User::where('id', $post->user_id)->first();
 
     	return response()->json([
-    		'code' => ApiStatusCode::OK, 
+    		'code' => ApiStatusCode::OK,
     		'message' => 'Lấy bài viết thành công',
     		'data' => [
     			'id' => $post->id,
@@ -373,7 +373,7 @@ class PostController extends Controller
 
         if (!$post) {
             return response()->json([
-                'code' => ApiStatusCode::NOT_EXISTED, 
+                'code' => ApiStatusCode::NOT_EXISTED,
                 'message' => 'Bài viết không tồn tại',
             ]);
         }
@@ -399,7 +399,7 @@ class PostController extends Controller
         $list_posts = Post::where('id', '>', $last_id)
                         ->orderBy('id', 'desc')
                         ->limit($count)
-                        ->get();                        
+                        ->get();
         $new_last_id = $list_posts->first()->id;
 
         return response()->json([
@@ -422,7 +422,7 @@ class PostController extends Controller
         $new_last_id = $list_posts->first()->id;
 
 
-        if($list_posts) {           
+        if($list_posts) {
             return response()->json([
                 'code' => ApiStatusCode::OK,
                 'message' => 'Lấy danh sách bài viết mới thành công',
@@ -430,8 +430,8 @@ class PostController extends Controller
                     'news_items' => $list_posts->count(),
                 ],
                 'last_id' => $new_last_id,
-            ]);   
-        } 
+            ]);
+        }
     }
     // public function addComment(Request $request,$id) {
 

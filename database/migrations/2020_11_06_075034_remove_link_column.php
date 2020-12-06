@@ -14,8 +14,8 @@ class RemoveLinkColumn extends Migration
     public function up()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn("image_link");
-            $table->dropColumn("video_link");
+//            $table->dropColumn("image_link");
+//            $table->dropColumn("video_link");
         });
     }
 
@@ -27,8 +27,8 @@ class RemoveLinkColumn extends Migration
     public function down()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->string("image_link");
-            $table->string("video_link");
+//            $table->string("image_link");
+//            $table->string("video_link");
         });
     }
 }

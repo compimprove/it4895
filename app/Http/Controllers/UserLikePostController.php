@@ -27,7 +27,7 @@ class UserLikePostController extends Controller
         $post = Post::find($post_id);
         if ($post == null) {
             return [
-                "code" => 9992,
+                "code" => ApiStatusCode::NOT_EXISTED,
                 "message" => "Bài viết không tồn tại"
             ];
         }
@@ -62,7 +62,7 @@ class UserLikePostController extends Controller
 
         if ($post == null) {
             return [
-                "code" => 9992,
+                "code" => ApiStatusCode::NOT_EXISTED,
                 "message" => "Bài viết không tồn tại"
             ];
         } else {

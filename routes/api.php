@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
 });
 
 Route::post('login', 'AuthController@getToken')->name("Login");
-Route::post('register', 'AuthController@register')->name("Signup");
+Route::post('signup', 'AuthController@register')->name("Signup");
 Route::post('check_verify_code', 'AuthController@checkVerifyCode')->name("check_verify_code");
 
 Route::post('testSaveFile', 'UserController@testSaveFile');
