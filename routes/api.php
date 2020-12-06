@@ -35,7 +35,7 @@ Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
     Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
      
     Route::post('add_post', 'PostController@addPost');
-    Route::post('edit_post', 'PostController@editPost');
+    Route::post('edit_post/{id}', 'PostController@editPost');
     Route::get('get_post', 'PostController@getPost');
     Route::post('delete_post', 'PostController@deletePost');
     Route::get('get_list_posts', 'PostController@getListPost');

@@ -16,6 +16,10 @@ class Post extends Model
     public function images() {
    		return $this->hasMany('App\Image', 'post_id', 'id');
     }
+
+    public function videos() {
+   		return $this->hasMany('App\Video', 'post_id', 'id');
+    }
 }
 
 
