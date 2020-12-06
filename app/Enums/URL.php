@@ -4,5 +4,5 @@ namespace App\Enums;
 
 final class URL
 {
-    const ADDRESS = 'localhost:8000/it4895';
+    const ADDRESS = 'http://it4895.herokuapp.com/it4895';
 }
