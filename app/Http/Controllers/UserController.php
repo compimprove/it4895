@@ -336,14 +336,7 @@ class UserController extends Controller
                 "message" => "Parameter type is invalid",
                 "data" => $validator->errors()
             ];
-        } else if ($fileValidator->fails()) {
-            return [
-                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "Parameter type is invalid",
-                "data" => $fileValidator->errors()
-            ];
-        }
-        else {
+        } else {
             if ($user->avatar != null) {
                 $this->fileService->deleteFile($user->avatar);
             }
