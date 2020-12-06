@@ -34,8 +34,8 @@ class UserController extends Controller
         } else {
             $user = $request->user();
             $result = [];
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $requestedFriends = $user->getFriendRequest();
             foreach ($requestedFriends as $item) {
                 array_push($result, [
@@ -70,8 +70,8 @@ class UserController extends Controller
         } else {
             $user = $request->user();
             $result = [];
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $requestedFriends = array_slice($user->getFriends(), $count * $index, $count);
             foreach ($requestedFriends as $item) {
                 array_push($result, [
@@ -82,7 +82,6 @@ class UserController extends Controller
                     "created" => $item->created_at,
                 ]);
             };
-            $result;
             return [
                 "code" => ApiStatusCode::OK,
                 "message" => "OK",
@@ -107,8 +106,8 @@ class UserController extends Controller
             $user = $request->user();
             $result = [];
             $suggestedFriends = [];
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $friends = $request->user()->getFriends();
             foreach ($friends as $friend) {
                 $suggestedFriends = array_merge($suggestedFriends, $friend->getFriends());
@@ -138,7 +137,7 @@ class UserController extends Controller
     {
         $user_id = $request->query("user_id");
         $user = $request->user();
-        if ($user_id == '' || $user->id == (int) $user_id || (int) $user_id < 0) {
+        if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "PARAMETER TYPE INVALID"
@@ -149,7 +148,7 @@ class UserController extends Controller
                 "message" => "User friend is max"
             ];
         } else {
-            $requestedFriend = User::find((int) $user_id);
+            $requestedFriend = User::find((int)$user_id);
             if ($requestedFriend == null) {
                 return [
                     "code" => ApiStatusCode::NOT_EXISTED,
@@ -157,11 +156,11 @@ class UserController extends Controller
                 ];
             } else {
                 $relation = Friends::where("user_id", $user->id)
-                    ->where("friend_id", (int) $user_id)->get();
+                    ->where("friend_id", (int)$user_id)->get();
                 if ($relation->isEmpty()) {
                     Friends::create([
                         "user_id" => $user->id,
-                        "friend_id" => (int) $user_id,
+                        "friend_id" => (int)$user_id,
                         "status" => FriendStatus::REQUESTED
                     ]);
                 } else {
@@ -224,7 +223,13 @@ class UserController extends Controller
 
     public function getInfo(Request $request, $id)
     {
-        $user = User::find($id);
+        $user = $request->user();
+        if ($user->id != $id) {
+            return [
+                "code" => ApiStatusCode::NOT_VALIDATE,
+                "message" => "User is not validated"
+            ];
+        }
         if ($user == null) {
             return [
                 "code" => 9994,
@@ -263,7 +268,7 @@ class UserController extends Controller
             ];
         } else {
             $user = $request->user();
-            $notificationId = (int) $notificationId;
+            $notificationId = (int)$notificationId;
             $notifs = Notification::where("user_id", $user->id)->where("id", $notificationId)->get();
             if ($notifs->isEmpty()) {
                 return [
@@ -292,8 +297,8 @@ class UserController extends Controller
             ];
         } else {
             $user = $request->user();
-            $count = (int) $count;
-            $index = (int) $index;
+            $count = (int)$count;
+            $index = (int)$index;
             $notifications = $user->notifications->toArray();
             $notifications = array_slice($notifications, $count * $index, $count);
             $notifications = array_map(function ($item) {
@@ -313,7 +318,7 @@ class UserController extends Controller
     public function setUserInfo(Request $request)
     {
         $user = $request->user();
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             'username' => 'string',
             "description" => "string|max:150",
             'avatar' => 'file|max:1024',
@@ -340,12 +345,12 @@ class UserController extends Controller
             $user->avatar = $linkAvatar;
             $linkCoverImage = $this->fileService->saveFile($request->file("cover_image"));
             $user->cover_image = $linkCoverImage;
-            $user["name"] = $request["username"];
-            $user["description"] = $request["description"];
-            $user["address"] = $request["address"];
-            $user["city"] = $request["city"];
-            $user["country"] = $request["country"];
-            $user["link"] = $request["link"];
+            $user["name"] = $request->query("username");
+            $user["description"] = $request->query("description");
+            $user["address"] = $request->query("address");
+            $user["city"] = $request->query("city");
+            $user["country"] = $request->query("country");
+            $user["link"] = $request->query("link");
             $user->save();
             return [
                 "code" => 1000,
@@ -364,27 +369,30 @@ class UserController extends Controller
     public function changeInfoAfterSignup(Request $request)
     {
         $user = $request->user();
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string',
+        $fileValidator = Validator::make($request->all(), [
             'avatar' => 'file|max:1024',
         ]);
-        if ($validator->fails()) {
+        if ($fileValidator->fails()) {
             return [
                 "code" => 1006,
-                "message" => "File Too Large",
+                "message" => "File size is too big",
             ];
-        } else if (strcmp($user->phone_number, $request["username"]) == 0) {
+        } else if (strcmp($user->phone_number, $request->query("username")) == 0) {
             return [
                 "code" => 1004,
                 "message" => "User name is invalid",
             ];
         } else {
-            $linkAvatar = $this->fileService->saveFile($request->file("avatar"));
-            $user->name = $request["username"];
-            if ($user->avatar != null) {
-                $this->fileService->deleteFile($user->avatar);
-            };
-            $user->avatar = $linkAvatar;
+            $user->name = $request->query("username");
+            if ($request->file("avatar") != null) {
+                $linkAvatar = $this->fileService->saveFile($request->file("avatar"));
+                if ($user->avatar != null) {
+                    $this->fileService->deleteFile($user->avatar);
+                };
+                $user->avatar = $linkAvatar;
+            } else {
+                $linkAvatar = "";
+            }
             $user->save();
             return [
                 "code" => 1000,
@@ -423,7 +431,7 @@ class UserController extends Controller
 
     public function setBlock(Request $request, $user_id)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             "type" => "required|numeric"
         ]);
         if ($validator->fails()) {
@@ -433,8 +441,8 @@ class UserController extends Controller
                 "data" => $validator->errors()
             ];
         } else {
-            $type = (int)$request["type"];
-            $user_id = (int) $user_id;
+            $type = (int)$request->query("type");
+            $user_id = (int)$user_id;
             if ($type != 0 && $type != 1) {
                 return [
                     "code" => 1003,

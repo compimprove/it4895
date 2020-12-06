@@ -45,10 +45,22 @@ class User extends Authenticatable
         return $this["is_blocked"];
     }
 
-    public function messagesSend()
+    public function getBlockSelfId()
     {
-        return $this->hasMany(Chat::class, 'user_a_id');
+        return Block::select("blocker_id")->where("user_id", $this->id)->get()->toArray();
     }
+
+    public function getBlockId()
+    {
+        return Block::select("user_id")->where("blocker_id", $this->id)->get()->toArray();
+    }
+
+    public function isBlockSelf(int $userId)
+    {
+        return in_array($userId, $this->getBlockSelfId());
+    }
+
+
 
     public function getFriends()
     {
@@ -76,7 +88,7 @@ class User extends Authenticatable
 
     public function getFriendRequest()
     {
-        $friendsInfo =  Friends::where("user_id", $this->id)
+        $friendsInfo = Friends::where("user_id", $this->id)
             ->where('status', FriendStatus::REQUESTED)->get();
         $friends = [];
         foreach ($friendsInfo as $friendInfo) {
@@ -104,6 +116,11 @@ class User extends Authenticatable
         }
     }
 
+    public function messagesSend()
+    {
+        return $this->hasMany(Chat::class, 'user_a_id');
+    }
+
     public function messagesReceive()
     {
         return $this->hasMany(Chat::class, 'user_b_id');
@@ -128,6 +145,7 @@ class User extends Authenticatable
     {
         $this->password = Hash::make($password);
     }
+
     // -------------------------------- static --------------------------------
     public static function makeUser(array $data): User
     {

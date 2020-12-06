@@ -15,7 +15,7 @@ class DeviceController extends Controller
                 "message" => "User is not validated"
             ];
         }
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             'device_token' => 'required|uuid',
             'device_type' => 'required'
         ]);

@@ -31,7 +31,7 @@ Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
     Route::post("/change-password", "AuthController@changePassword")->name("change_password");
     Route::post("/device", "DeviceController@setDeviceInfo")->name("set_devtoken");
     Route::get("user/block", "UserController@getBlock")->name("get_list_blocks");
-    Route::get("/user/{id}", "UserController@getInfo")->name("get_user_info");
+    Route::get("/user", "UserController@getInfo")->name("get_user_info");
     Route::post('change-info-after-signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
      
     Route::post('add_post', 'PostController@addPost');
@@ -42,8 +42,14 @@ Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
     Route::get('check_new_item', 'PostController@checkNewItem');
 
     Route::post("/set-user-info", "UserController@setUserInfo")->name("set_user_info");
-    Route::get('messages/{userId2}', 'ChatController@fetchAllMessages');
-    Route::post('messages/{userId2}', 'ChatController@sendMessage');
+
+    Route::get('messages/list-conversation', 'ChatController@getListConversation')->name("get_list_conversation");
+    Route::get('messages/conversation', 'ChatController@getConversation')->name("get_conversation");
+    Route::post('messages/set-read-message', 'ChatController@setReadMessage')->name("set_read_message");
+    Route::post('messages/delete-message', 'ChatController@deleteMessage')->name("delete_message");
+    Route::post('messages/delete-conversation', 'ChatController@deleteConversation')->name("delete_conversation");
+    Route::get('message/{userId2}', 'ChatController@fetchAllMessages');
+    Route::post('message/{userId2}', 'ChatController@sendMessage');
     Route::post('report/{id}', 'UserReportPostController@reportPost')->name("report_post");
     Route::post('like/add/{post_id}', 'UserLikePostController@likePost')->name("like_post");
     Route::get('comment/{id}', 'CommentController@getComment')->name("get_comment");

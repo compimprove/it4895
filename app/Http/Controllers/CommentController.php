@@ -15,7 +15,7 @@ class CommentController extends Controller
 {
     public function addComment(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->query(), [
             'described' => 'required'
         ]);
 
@@ -26,7 +26,7 @@ class CommentController extends Controller
                 'data' => $validator->errors()
             ]);
         } else {
-            $validator = Validator::make($request->all(), [
+            $validator = Validator::make($request->query(), [
                 'described' => 'string'
             ]);
             if ($validator->fails()) {
@@ -50,7 +50,7 @@ class CommentController extends Controller
         $comment = new Comment([
             'user_id' => $user_id,
             'post_id' => $id,
-            'content' => $request['described'],
+            'content' => $request->query("described"),
 
         ]);
         if ($comment->save()) {
@@ -61,7 +61,7 @@ class CommentController extends Controller
                     'data' => [
                         'user_id' => $comment->user_id,
                         'post_id' => $id,
-                        'content' => $request['described']
+                        'content' => $request->query("described")
                     ]
                 ]
             );
