@@ -16,6 +16,20 @@ class AuthController extends Controller
     public function getToken(Request $request)
     {
 
+        $phoneNumber = $request->query("phonenumber");
+        $password = $request->query("password");
+        if ($phoneNumber == "" && $password == "") {
+            return [
+                "code" => ApiStatusCode::PARAMETER_NOT_ENOUGH,
+                "message" => "Parameter is not enough"
+            ];
+        }
+        if ($phoneNumber == $password || !str_starts_with($phoneNumber, "0")) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        }
         $validator = Validator::make($request->query(), [
             'phonenumber' => 'required|digits:10',
             'password' => 'required|string|max:10|min:6',
@@ -29,20 +43,6 @@ class AuthController extends Controller
             ];
         }
 
-        $phoneNumber = $request->query("phonenumber");
-        $password = $request->query("password");
-        if ($phoneNumber == "" && $password == "") {
-            return [
-                "code" => ApiStatusCode::PARAMETER_NOT_ENOUGH,
-                "message" => "Parameter is not enough"
-            ];
-        }
-        if ($phoneNumber == $password || str_starts_with($phoneNumber, "0")) {
-            return [
-                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "Parameter type is invalid"
-            ];
-        }
         $user = User::where('phone_number', $phoneNumber)->first();
         if ($user == null) {
             return [
@@ -93,7 +93,7 @@ class AuthController extends Controller
                 "message" => "Parameter type is invalid"
             ];
         }
-        if (str_starts_with($data["phone_number"], "0")) {
+        if (!str_starts_with($data["phone_number"], "0")) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid"

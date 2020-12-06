@@ -29,7 +29,7 @@ class UserTest extends TestCase
 
         $response = $this
             ->actingAs($user1)
-            ->get("it4895/user/2");
+            ->get("it4895/user?id=2");
         $response
             ->assertStatus(200)
             ->assertJsonPath("code", 1000)
