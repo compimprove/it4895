@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ApiStatusCode;
+use App\Enums\CommonResponse;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
@@ -163,6 +164,8 @@ class AuthController extends Controller
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Old password is not correct"
             ];
+        } else if ($request->query("password") == $request->query("new_password")) {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
         } else {
             $user->changePassword($request->query("new_password"));
             $user->save();

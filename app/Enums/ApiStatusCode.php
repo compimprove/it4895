@@ -12,6 +12,13 @@ final class ApiStatusCode
     const REQUIRE_PERMISSION_ACCESS = 1009;
     const PARAMETER_NOT_ENOUGH = 1002;
     const PARAMETER_TYPE_INVALID = 1003;
+    const PARAMETER_NOT_VALID = 1004;
     const LOST_CONNECTED = 1001;
     const NOT_VALIDATE = 9995;
+
+    const MESSAGE = [
+        self::OK => "OK",
+        self::PARAMETER_NOT_VALID => "Parameter value is not valid"
+    ];
 }
+
