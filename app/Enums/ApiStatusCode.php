@@ -18,6 +18,7 @@ final class ApiStatusCode
 
     const MESSAGE = [
         self::OK => "OK",
+        self::PARAMETER_TYPE_INVALID => "PARAMETER TYPE INVALID",
         self::PARAMETER_NOT_VALID => "Parameter value is not valid"
     ];
 }

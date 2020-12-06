@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Block;
 use App\Enums\ApiStatusCode;
+use App\Enums\CommonResponse;
 use App\Enums\FriendStatus;
 use App\Friends;
 use App\Notification;
@@ -282,6 +283,9 @@ class UserController extends Controller
                     "message" => "Not existed notification id: " . $notificationId
                 ];
             } else {
+                if ($notifs[0]->is_read) {
+                    return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
+                }
                 $notifs[0]->is_read = true;
                 $notifs[0]->save();
                 return [
