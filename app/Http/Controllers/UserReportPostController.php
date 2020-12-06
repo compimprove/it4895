@@ -15,7 +15,6 @@ class UserReportPostController extends Controller
     //
     public function reportPost(Request $request, $id)
     {
-
         $validator = Validator::make($request->query(), [
             'described' => 'required'
         ]);

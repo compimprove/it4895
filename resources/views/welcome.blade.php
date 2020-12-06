@@ -5,7 +5,7 @@ $allApiName = [
     "check_verify_code",
     "change_info_after_signup",
     "add_post", "get_post", "delete_post",
-    //"get_list_posts", "edit_post","check_new_item"
+    "get_list_posts", "edit_post","check_new_item",
     "get_comment", "set_comment",
     "report_post", "like_post",
     // search, get_saved_search, del_saved_search

@@ -39,7 +39,7 @@ class CommentController extends Controller
                 $post = Post::find($id);
                 if ($post == null) {
                     return [
-                        "code" => 9992,
+                        "code" => ApiStatusCode::NOT_EXISTED,
                         "message" => "Bài viết không tồn tại"
                     ];
                 }
@@ -87,7 +87,7 @@ class CommentController extends Controller
         }
         if ($post == null) {
             return [
-                "code" => 9992,
+                "code" => ApiStatusCode::NOT_EXISTED,
                 "message" => "Bài viết không tồn tại"
             ];
         } else {

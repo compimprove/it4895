@@ -21,7 +21,7 @@ class DeviceController extends Controller
         ]);
         if ($validator->fails()) {
             return [
-                "code" => 1003,
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid",
                 "data" => $validator->errors()
             ];

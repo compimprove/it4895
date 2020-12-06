@@ -318,23 +318,32 @@ class UserController extends Controller
     public function setUserInfo(Request $request)
     {
         $user = $request->user();
+        $fileValidator = Validator::make($request->all(), [
+            'avatar' => 'file|max:1024',
+            'cover_image' => 'file|max:1024',
+        ]);
         $validator = Validator::make($request->query(), [
             'username' => 'string',
             "description" => "string|max:150",
-            'avatar' => 'file|max:1024',
             "address" => "string",
             "city" => "string",
             "country" => "string",
-            'cover_image' => 'file|max:1024',
             "link" => "url",
         ]);
         if ($validator->fails()) {
             return [
-                "code" => 1003,
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid",
                 "data" => $validator->errors()
             ];
-        } else {
+        } else if ($fileValidator->fails()) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid",
+                "data" => $fileValidator->errors()
+            ];
+        }
+        else {
             if ($user->avatar != null) {
                 $this->fileService->deleteFile($user->avatar);
             }
@@ -436,7 +445,7 @@ class UserController extends Controller
         ]);
         if ($validator->fails()) {
             return [
-                "code" => 1003,
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid",
                 "data" => $validator->errors()
             ];
@@ -445,12 +454,12 @@ class UserController extends Controller
             $user_id = (int)$user_id;
             if ($type != 0 && $type != 1) {
                 return [
-                    "code" => 1003,
+                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                     "message" => "Trường Type có giá trị sai"
                 ];
             } else if (!User::find($user_id) || User::find($user_id)->isBlocked()) {
                 return [
-                    "code" => 1003,
+                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                     "message" => "User với id " . $user_id . " đã bị khóa hoặc không tồn tại"
                 ];
             } else {
