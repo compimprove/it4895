@@ -31,6 +31,10 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function blockers() {
+        return $this->hasMany('App\Block', 'blocker_id', 'id');
+    }
+
     /**
      * The attributes that should be cast to native types.
      *

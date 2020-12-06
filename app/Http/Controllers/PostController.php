@@ -348,7 +348,25 @@ class PostController extends Controller
         }
         $images = $post->images;
         $videos = $post->videos;
-    	$user = User::where('id', $post->user_id)->first();
+    	$author = User::where('id', $post->user_id)->first();
+
+        $blockers = $author->blockers();
+
+        $i = 0;
+        $blockers_list = [];
+        foreach ($blockers as $blocker) {
+            $blockers_list[$i] = $blockers->id;
+            $i++;
+        }
+
+        $user = $request->user();
+        if(in_array($user->id, $blockers_list)) {
+            return response()->json([
+                'code' => ApiStatusCode::REQUIRE_PERMISSION_ACCESS, 
+                'message' => 'Người xem bị chặn',
+                'is_blocker' => 1
+            ]);
+        }
 
     	return response()->json([
     		'code' => ApiStatusCode::OK, 
@@ -360,9 +378,13 @@ class PostController extends Controller
     			'modified' => $post->updated_at,
     			'like' => $post->like
     		],
+            'is_blocker' => 0,
+            'can_edit' => 1,
+            'can_comment' => 1,
+            'banned' => 0,
     		'image' => $images,
             'video' => $videos,
-    		'author' => $user
+    		'author' => $author
     	]);
     }
 
