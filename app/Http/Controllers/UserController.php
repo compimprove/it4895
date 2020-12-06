@@ -60,6 +60,7 @@ class UserController extends Controller
 
     public function getFriends(Request $request)
     {
+        $userId = $request->query("user_id");
         $index = $request->query("index");
         $count = $request->query("count");
         if ($index == '' || $count == '') {
@@ -68,7 +69,11 @@ class UserController extends Controller
                 "message" => "PARAMETER TYPE INVALID"
             ];
         } else {
-            $user = $request->user();
+            if ($userId == '') {
+                $user = $request->user();
+            } else {
+                $user = User::find((int)$userId);
+            }
             $result = [];
             $count = (int)$count;
             $index = (int)$index;
