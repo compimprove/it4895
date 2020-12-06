@@ -77,7 +77,8 @@ class UserController extends Controller
             $result = [];
             $count = (int)$count;
             $index = (int)$index;
-            $requestedFriends = array_slice($user->getFriends(), $count * $index, $count);
+            $friends = $user->getFriends();
+            $requestedFriends = array_slice($friends, $count * $index, $count);
             foreach ($requestedFriends as $item) {
                 array_push($result, [
                     "id" => $item->id,
@@ -92,7 +93,7 @@ class UserController extends Controller
                 "message" => "OK",
                 "data" => [
                     "friends" => $result,
-                    "total" => count($result)
+                    "total" => count($friends)
                 ]
             ];
         }
