@@ -15,7 +15,7 @@ class Authenticate extends Middleware
         if ($request->user() == null) {
             return response([
                 "code" => 1004,
-                "message" => "User is unauthorized"
+                "message" => "Parameter value is not valid"
             ]);
         } else {
             return $next($request);
