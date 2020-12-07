@@ -43,7 +43,7 @@ class ChatController extends Controller
         if ($index == '' || $count == '' || $partnerId == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         }
         $count = (int)$count;
@@ -83,7 +83,7 @@ class ChatController extends Controller
         if ($index == '' || $count == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         }
         $count = (int)$count;
@@ -130,7 +130,7 @@ class ChatController extends Controller
         if ($partnerId == '' || $chatId == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         }
         $partnerId = (int)$partnerId;
@@ -172,7 +172,7 @@ class ChatController extends Controller
         if ($partnerId == '' || $chatId == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         }
         $partnerId = (int)$partnerId;
@@ -206,7 +206,7 @@ class ChatController extends Controller
         if ($partnerId == '' || $chatId == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         }
         $partnerId = (int)$partnerId;

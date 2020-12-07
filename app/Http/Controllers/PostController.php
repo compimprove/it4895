@@ -24,7 +24,7 @@ class PostController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                'message' => 'Dung lượng file quá lớn',
+                'message' => 'Parameter type is invalid',
                 'data' => $validator->errors()
             ]);
         }
@@ -32,7 +32,7 @@ class PostController extends Controller
         if( $request->hasFile('image') && $request->hasFile('video')) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                'message' => 'Chỉ được phép gửi ảnh hoặc video',
+                'message' => 'Parameter type is invalid',
             ]);
         }
 
@@ -43,7 +43,7 @@ class PostController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                'message' => 'Video không đúng định dạng'
+                'message' => 'Parameter type is invalid'
             ]);
         }
 
@@ -64,7 +64,7 @@ class PostController extends Controller
 					// $exe_flg = false;
 					return response()->json([
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                        'message' => 'File ảnh không đúng định dạng',
+                        'message' => 'Parameter type is invalid',
                     ]);
 				}
 			}
@@ -86,7 +86,7 @@ class PostController extends Controller
                     // $exe_flg = false;
                     return response()->json([
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                        'message' => 'File video không đúng định dạng',
+                        'message' => 'Parameter type is invalid',
                     ]);
                 }
             }
@@ -170,7 +170,7 @@ class PostController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                'message' => 'Dung lượng file quá lớn',
+                'message' => 'Parameter type is invalid',
                 'data' => $validator->errors()
             ]);
         }
@@ -178,7 +178,7 @@ class PostController extends Controller
         if( $request->hasFile('image') && $request->hasFile('video')) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                'message' => 'Chỉ được phép gửi ảnh hoặc video',
+                'message' => 'Parameter type is invalid',
             ]);
         }
 
@@ -189,7 +189,7 @@ class PostController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                'message' => 'Video không đúng định dạng'
+                'message' => 'Parameter type is invalid'
             ]);
         }
 
@@ -210,7 +210,7 @@ class PostController extends Controller
                     // $exe_flg = false;
                     return response()->json([
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                        'message' => 'File ảnh không đúng định dạng',
+                        'message' => 'Parameter type is invalid',
                     ]);
                 }
             }
@@ -232,7 +232,7 @@ class PostController extends Controller
                     // $exe_flg = false;
                     return response()->json([
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                        'message' => 'File video không đúng định dạng',
+                        'message' => 'Parameter type is invalid',
                     ]);
                 }
             }

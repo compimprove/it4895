@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ApiStatusCode;
 use Illuminate\Http\Request;
 use App\Post;
 use App\User;
 use App\Comment;
 use App\Search;
-use App\ApiStatusCode;
 use App\URL;
 use Illuminate\Support\Facades\Validator;
 
 class SearchController extends Controller
 {
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
 
         $user_id = $request->query('user_id');
         $index = $request->query("index");
@@ -21,38 +22,36 @@ class SearchController extends Controller
         $keyword = $request->query("keyword");
         $user = $request->user();
 
-        if ($user_id == '' || $user->id == (int) $user_id || (int) $user_id < 0) {
+        if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
-        } 
-        else 
-        {
-            if(!User::find($user_id) || User::find($user_id)->isBlocked()) {
+        } else {
+            if (!User::find($user_id) || User::find($user_id)->isBlocked()) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "User is not validated"
+                    "message" => "Parameter type is invalid"
                 ];
             }
 
             if ($index == '' || $count == '' || $keyword == '') {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "PARAMETER TYPE INVALID"
+                    "message" => "Parameter type is invalid"
                 ];
             }
 
-            if( (int) $index < 0 || (int) $count < 0) {
+            if ((int)$index < 0 || (int)$count < 0) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "PARAMETER TYPE INVALID"
+                    "message" => "Parameter type is invalid"
                 ];
             }
         }
 
-        $index = (int) $index;
-        $count = (int) $count;
+        $index = (int)$index;
+        $count = (int)$count;
         $result = [];
 
         $postBySearch = Post::where('content', 'LIKE', "%$keyword%")->get();
@@ -63,9 +62,9 @@ class SearchController extends Controller
             'index' => $index
         ]);
 
-        $search -> save();
+        $search->save();
 
-        if($postBySearch == null) {
+        if ($postBySearch == null) {
             return [
                 "code" => ApiStatusCode::NO_DATA,
                 "message" => "Post not found"
@@ -95,43 +94,44 @@ class SearchController extends Controller
 
     }
 
-    public function getSavedSearch(Request $request) {
+    public function getSavedSearch(Request $request)
+    {
         $index = $request->query("index");
         $count = $request->query("count");
         $user_id = $request->query('user_id');
 
         $user = $request->user();
 
-        if ($user_id == '' || $user->id == (int) $user_id || (int) $user_id < 0) {
+        if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         } else {
-            if($user->isBlocked()) {
+            if ($user->isBlocked()) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "User is not validated"
+                    "message" => "Parameter type is invalid"
                 ];
             }
 
             if ($index == '' || $count == '') {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "PARAMETER TYPE INVALID"
+                    "message" => "Parameter type is invalid"
                 ];
             }
 
-            if( (int) $index < 0 || (int) $count < 0) {
+            if ((int)$index < 0 || (int)$count < 0) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "PARAMETER TYPE INVALID"
+                    "message" => "Parameter type is invalid"
                 ];
             }
         }
 
-        $index = (int) $index;
-        $count = (int) $count;
+        $index = (int)$index;
+        $count = (int)$count;
 
         $result = [];
 
@@ -154,25 +154,26 @@ class SearchController extends Controller
         ];
     }
 
-    public function delSavedSearch($search_id) {
+    public function delSavedSearch(Request $request, $search_id)
+    {
 
         $user = $request->user();
 
-        if($user->isBlocked()) {
+        if ($user->isBlocked()) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "User is not validated"
+                "message" => "Parameter type is invalid"
             ];
         }
-        
-    	$search = Search::where('id', $search_id)->first();
 
-    	if($search->delete()) {
-    		return response()->json([
-    			'code' => ApiStatusCode::OK,
-    			'message' => 'Xóa tìm kiếm thành công'
-    		]);
-    	}
+        $search = Search::where('id', $search_id)->first();
+
+        if ($search->delete()) {
+            return response()->json([
+                'code' => ApiStatusCode::OK,
+                'message' => 'Xóa tìm kiếm thành công'
+            ]);
+        }
     }
 
 }

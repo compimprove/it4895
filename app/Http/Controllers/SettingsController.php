@@ -28,7 +28,7 @@ class SettingsController extends Controller
             if ($queryValue == '' || ((int)$queryValue != 0 && (int)$queryValue != 1)) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "PARAMETER TYPE INVALID: " . $setting
+                    "message" => "Parameter type is invalid: " . $setting
                 ];
             } else {
                 $settings[$setting] = $queryValue;

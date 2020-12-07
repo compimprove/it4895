@@ -46,10 +46,7 @@ class AuthController extends Controller
 
         $user = User::where('phone_number', $phoneNumber)->first();
         if ($user == null) {
-            return [
-                "code" => 1004,
-                "message" => "Parameter value is invalid"
-            ];
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
         }
         if ($this->checkPasswordCorrect($user, $password)) {
             $user->tokens()->delete();
@@ -64,10 +61,7 @@ class AuthController extends Controller
                 ]
             ];
         } else {
-            return [
-                "code" => 1004,
-                "message" => "Password is not correct"
-            ];
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
         }
     }
 
@@ -162,7 +156,7 @@ class AuthController extends Controller
         } else if (!$this->checkPasswordCorrect($user, $request->query("password"))) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "Old password is not correct"
+                "message" => "Parameter type is invalid"
             ];
         } else if ($request->query("password") == $request->query("new_password")) {
             return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
@@ -209,10 +203,7 @@ class AuthController extends Controller
         } else {
             $user = User::where("phone_number", $request->query("phonenumber"))->first();
             if ($user == null) {
-                return [
-                    "code" => 1004,
-                    "message" => "User didn't exist",
-                ];
+                return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
             } else {
                 $user->tokens()->delete();
                 return [

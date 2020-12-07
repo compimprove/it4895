@@ -32,7 +32,7 @@ class UserReportPostController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    'message' => 'Kiểu tham số không đúng đắn',
+                    'message' => 'Parameter type is invalid',
                     'data' => $validator->errors()
                 ]);
             }

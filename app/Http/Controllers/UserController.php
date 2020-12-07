@@ -30,7 +30,7 @@ class UserController extends Controller
         if ($index == '' || $count == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         } else {
             $user = $request->user();
@@ -67,7 +67,7 @@ class UserController extends Controller
         if ($index == '' || $count == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         } else {
             if ($userId == '') {
@@ -107,7 +107,7 @@ class UserController extends Controller
         if ($index == '' || $count == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         } else {
             $user = $request->user();
@@ -147,7 +147,7 @@ class UserController extends Controller
         if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         } else if (count($user->getFriends()) > Friends::MAX_FRIENDS) {
             return [
@@ -190,7 +190,7 @@ class UserController extends Controller
         if ($request->query("user_id") == '' || $request->query("is_accept") == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         }
         $friends = Friends::where("user_id", $user->id)
@@ -222,7 +222,7 @@ class UserController extends Controller
             } else {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Is Accept invalid"
+                    "message" => "Parameter type is invalid"
                 ];
             }
         }
@@ -271,7 +271,7 @@ class UserController extends Controller
         if ($notificationId == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         } else {
             $user = $request->user();
@@ -303,7 +303,7 @@ class UserController extends Controller
         if ($index == '' || $count == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "PARAMETER TYPE INVALID"
+                "message" => "Parameter type is invalid"
             ];
         } else {
             $user = $request->user();
@@ -390,10 +390,7 @@ class UserController extends Controller
                 "message" => "File size is too big",
             ];
         } else if (strcmp($user->phone_number, $request->query("username")) == 0) {
-            return [
-                "code" => 1004,
-                "message" => "User name is invalid",
-            ];
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
         } else {
             $user->name = $request->query("username");
             if ($request->file("avatar") != null) {
@@ -458,12 +455,12 @@ class UserController extends Controller
             if ($type != 0 && $type != 1) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Trường Type có giá trị sai"
+                    "message" => "Parameter type is invalid"
                 ];
             } else if (!User::find($user_id) || User::find($user_id)->isBlocked()) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "User với id " . $user_id . " đã bị khóa hoặc không tồn tại"
+                    "message" => "Parameter type is invalid"
                 ];
             } else {
                 $block = Block::where("blocker_id", $user_id)
