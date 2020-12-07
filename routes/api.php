@@ -55,6 +55,12 @@ Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
     Route::get('comment/{id}', 'CommentController@getComment')->name("get_comment");
     Route::post('comment/add/{id}', 'CommentController@addComment')->name("set_comment");
     Route::post("user/block/{user_id}", "UserController@setBlock")->name("set_block");
+
+    Route::post('search', 'SearchController@search')->name("search");
+    Route::post('get_saved_search', 'SearchController@getSavedSearch')->name("get_saved_search");
+    Route::post('del_saved_search', 'SearchController@delSavedSearch')->name("del_saved_search");
+
+    Route::post('get_list_videos', 'VideoController@getListVideos')->name("get_list_videos");
 });
 
 Route::post('login', 'AuthController@getToken')->name("Login");
