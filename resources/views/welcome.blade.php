@@ -8,10 +8,10 @@ $allApiName = [
     "get_list_posts", "edit_post","check_new_item",
     "get_comment", "set_comment",
     "report_post", "like_post",
-    // search, get_saved_search, del_saved_search
+    "search", "get_saved_search", "del_saved_search",
     "get_user_friends", "get_user_info",
     "set_user_info",
-    //"get_list_videos","check_new_version",
+    "get_list_videos",//"check_new_version",
 
     "get_conversation", "delete_message", "get_list_conversation", "delete_conversation", "set_read_message",
 
