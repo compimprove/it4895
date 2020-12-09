@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum', 'user-blocked'])->group(function () {
+Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -69,7 +69,7 @@ Route::post('check_verify_code', 'AuthController@checkVerifyCode')->name("check_
 
 Route::post('testSaveFile', 'UserController@testSaveFile');
 Route::post('testDeleteFile', 'UserController@testDeleveFile');
-	Route::get('test', 'PostController@test');
+Route::get('test', 'PostController@test');
 
 //Route::post('post/add', 'PostController@addPost')->name("add_post");
 //Route::get('post/{id}', 'PostController@getPost')->name("get_post");
