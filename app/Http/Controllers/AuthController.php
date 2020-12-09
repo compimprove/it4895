@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -189,10 +191,7 @@ class AuthController extends Controller
             if (Validator::make($request->query(), [
                 'code_verify' => 'required',
             ])->fails()) {
-                return [
-                    "code" => 1002,
-                    "message" => "Dont have Code Verify",
-                ];
+                return CommonResponse::getResponse(1002);
             } else {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
@@ -204,8 +203,14 @@ class AuthController extends Controller
             $user = User::where("phone_number", $request->query("phonenumber"))->first();
             if ($user == null) {
                 return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
+            } else if ($user->verified_email_at != null) {
+                return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
+            } else if ($user->verify_code != $request->query('code_verify')) {
+                return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
             } else {
                 $user->tokens()->delete();
+                $user->verified_email_at = new \DateTime();
+                $user->save();
                 return [
                     "code" => 1000,
                     "message" => "OK",
@@ -216,5 +221,39 @@ class AuthController extends Controller
                 ];
             }
         }
+    }
+
+    public function getVerifyCode(Request $request)
+    {
+        $validator = Validator::make($request->query(), [
+            'phonenumber' => 'required|digits:10',
+        ]);
+        if ($validator->fails()) {
+            return CommonResponse::getResponse(1004);
+        }
+        $phoneNumber = $request->query('phonenumber');
+
+        $user = User::where('phone_number', $phoneNumber)->first();
+        if ($user == null) {
+            return CommonResponse::getResponse(1004);
+        }
+        if ($user->verified_email_at != null) {
+            return CommonResponse::getResponse(1010);
+        }
+        if ($user->time_request_verify_code != null) {
+            $time_request_verify_code = strtotime($user->time_request_verify_code);
+            if (((new \DateTime())->getTimeStamp() - $time_request_verify_code) < 120) {
+                return CommonResponse::getResponse(1010);
+            }
+        }
+
+        $user->time_request_verify_code = new \DateTime();
+        $user->verify_code = Str::random(6);
+        $user->save();
+        $response = CommonResponse::getResponse(1000);
+        $response["data"] = [
+            "code" => $user->verify_code
+        ];
+        return $response;
     }
 }

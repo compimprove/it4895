@@ -30,6 +30,8 @@ class CreateUsersTable extends Migration
             $table->integer("is_online")->nullable();
             $table->integer("device_id")->nullable();
             $table->dateTime("verified_email_at")->nullable();
+            $table->dateTime("time_request_verify_code")->nullable();
+            $table->string("verify_code",10)->nullable();
             $table->string('uuid')->nullable();
             $table->rememberToken();
             $table->timestamps();

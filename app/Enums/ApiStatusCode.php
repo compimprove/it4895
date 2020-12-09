@@ -5,6 +5,7 @@ namespace App\Enums;
 final class ApiStatusCode
 {
     const OK = 1000;
+    const HAS_DONE = 1010;
     const NOT_EXISTED = 9992;
     const NO_DATA = 9994;
     const UNKNOW_ERROR = 1005;
@@ -19,7 +20,9 @@ final class ApiStatusCode
     const MESSAGE = [
         self::OK => "OK",
         self::PARAMETER_TYPE_INVALID => "Parameter type is invalid",
-        self::PARAMETER_NOT_VALID => "Parameter value is not valid"
+        self::PARAMETER_NOT_VALID => "Parameter value is not valid",
+        self::HAS_DONE => "Action has been done previously by this user",
+        self::PARAMETER_NOT_ENOUGH => "Parameter is not enough",
     ];
 }
 

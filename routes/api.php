@@ -66,6 +66,7 @@ Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked'])->group(funct
 Route::post('login', 'AuthController@getToken')->name("Login");
 Route::post('signup', 'AuthController@register')->name("Signup");
 Route::post('check_verify_code', 'AuthController@checkVerifyCode')->name("check_verify_code");
+Route::get('get_verify_code', 'AuthController@getVerifyCode')->name("get_verify_code");
 
 Route::post('testSaveFile', 'UserController@testSaveFile');
 Route::post('testDeleteFile', 'UserController@testDeleveFile');
