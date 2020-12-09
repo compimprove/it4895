@@ -29,7 +29,7 @@ class PostController extends Controller
             ]);
         }
 
-        if( $request->hasFile('image') && $request->hasFile('video')) {
+        if ($request->hasFile('image') && $request->hasFile('video')) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 'message' => 'Parameter type is invalid',
@@ -61,14 +61,14 @@ class PostController extends Controller
 
                 if (!$check) {
                     // nếu có file nào không đúng đuôi mở rộng thì đổi flag thành false
-					// $exe_flg = false;
-					return response()->json([
+                    // $exe_flg = false;
+                    return response()->json([
                         'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                         'message' => 'Parameter type is invalid',
                     ]);
-				}
-			}
-		}
+                }
+            }
+        }
 
         if ($request->hasFile('video')) {
             $allowedfileExtension = ['mp4'];
@@ -93,37 +93,37 @@ class PostController extends Controller
         }
 
         $user = $request->user();
-		$post = new Post([
+        $post = new Post([
             'user_id' => $user->id,
             'described' => $request['described'],
             'like' => 0
         ]);
 
         if ($post->save()) {
-			// nếu không có file nào vi phạm validate thì tiến hành lưu DB
-            if($request->hasFile('image')) {
-				$i = 1;
-				foreach ($request->file('image') as $image) {
-					$image->storeAs('image', $image->getClientOriginalName());
-					// $filename = $image->getClientOriginalName();
+            // nếu không có file nào vi phạm validate thì tiến hành lưu DB
+            if ($request->hasFile('image')) {
+                $i = 1;
+                foreach ($request->file('image') as $image) {
+                    $image->storeAs('image', $image->getClientOriginalName());
+                    // $filename = $image->getClientOriginalName();
 
-		        	$saveImage = new Image([
-			        	'post_id' => $post->id,
-			        	'link' => $image->getClientOriginalName(),
-			        	'image_sort' => $i
-			        ]);
-			        if ( $saveImage->save() ) {
-			        	$i++;
-			        } else {
-			        	return response()->json([
-			        		'code' => ApiStatusCode::LOST_CONNECTED,
-			    			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
-			    		]);
-			        }
-				}
+                    $saveImage = new Image([
+                        'post_id' => $post->id,
+                        'link' => $image->getClientOriginalName(),
+                        'image_sort' => $i
+                    ]);
+                    if ($saveImage->save()) {
+                        $i++;
+                    } else {
+                        return response()->json([
+                            'code' => ApiStatusCode::LOST_CONNECTED,
+                            'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
+                        ]);
+                    }
+                }
             }
 
-            if($request->hasFile('video')) {
+            if ($request->hasFile('video')) {
                 $i = 1;
                 $video = $request->file('video');
                 $video->storeAs('video', $video->getClientOriginalName());
@@ -133,7 +133,7 @@ class PostController extends Controller
                     'post_id' => $post->id,
                     'link' => $video->getClientOriginalName(),
                 ]);
-                if ( !$saveVideo->save() ) {
+                if (!$saveVideo->save()) {
                     return response()->json([
                         'code' => ApiStatusCode::LOST_CONNECTED,
                         'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
@@ -141,26 +141,26 @@ class PostController extends Controller
                 }
             }
 
-        	return response()->json(
-        		[
-        			'code' => ApiStatusCode::OK,
-        			'message' => 'Tạo bài viết thành công',
-        			'data' => [
-        				'id' => $post->id,
-        				'url' => URL::ADDRESS . '/posts/' . $post->id
-        			]
-        		]
-        	);
-        }
-        else return response()->json(
-        	[
-        		'code' => ApiStatusCode::LOST_CONNECTED,
-    			'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
-    		]
+            return response()->json(
+                [
+                    'code' => ApiStatusCode::OK,
+                    'message' => 'Tạo bài viết thành công',
+                    'data' => [
+                        'id' => $post->id,
+                        'url' => URL::ADDRESS . '/posts/' . $post->id
+                    ]
+                ]
+            );
+        } else return response()->json(
+            [
+                'code' => ApiStatusCode::LOST_CONNECTED,
+                'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
+            ]
         );
     }
 
-    public function editPost(Request $request, $id) {
+    public function editPost(Request $request, $id)
+    {
 
         $validator = Validator::make($request->all(), [
             'video' => 'max:10000|nullable',
@@ -175,7 +175,7 @@ class PostController extends Controller
             ]);
         }
 
-        if( $request->hasFile('image') && $request->hasFile('video')) {
+        if ($request->hasFile('image') && $request->hasFile('video')) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 'message' => 'Parameter type is invalid',
@@ -243,7 +243,7 @@ class PostController extends Controller
         $post = Post::where('id', $post_id)->first();
 
         //==== Kết thúc nếu bài viết không tồn tại ====//
-        if(empty($post)) {
+        if (empty($post)) {
             return response()->json([
                 'code' => ApiStatusCode::NOT_EXISTED,
                 'message' => 'Bài viết không tồn tại'
@@ -254,24 +254,24 @@ class PostController extends Controller
         $post['described'] = $request['described'];
 
         $images = $post->images;
-        foreach($images as $image) {
+        foreach ($images as $image) {
             $image->delete();
         }
 
         $videos = $post->videos;
-        foreach($videos as $video) {
+        foreach ($videos as $video) {
             $video->delete();
         }
 
         if ($post->save()) {
             // nếu không có file nào vi phạm validate thì tiến hành lưu DB
             $saveImage = Image::where('post_id', $post_id)->get();
-            foreach($item as $saveImage) {
+            foreach ($item as $saveImage) {
                 $item['post_id'] = '';
                 $item->save();
             }
 
-            if($request->hasFile('image')) {
+            if ($request->hasFile('image')) {
                 $i = 1;
                 foreach ($request->file('image') as $image) {
                     $image->storeAs('image', $image->getClientOriginalName());
@@ -282,7 +282,7 @@ class PostController extends Controller
                         'link' => $image->getClientOriginalName(),
                         'image_sort' => $i
                     ]);
-                    if ( $saveImage->save() ) {
+                    if ($saveImage->save()) {
                         $i++;
                     } else {
                         return response()->json([
@@ -293,9 +293,9 @@ class PostController extends Controller
                 }
             }
 
-            if($request->hasFile('video')) {
+            if ($request->hasFile('video')) {
                 $prevVideo = Video::where('post_id', $post_id)->get();
-                foreach($item as $prevVideo) {
+                foreach ($item as $prevVideo) {
                     $item['post_id'] = '';
                     $item->save();
                 }
@@ -308,7 +308,7 @@ class PostController extends Controller
                     'post_id' => $post->id,
                     'link' => $video->getClientOriginalName(),
                 ]);
-                if ( !$saveVideo->save() ) {
+                if (!$saveVideo->save()) {
                     return response()->json([
                         'code' => ApiStatusCode::LOST_CONNECTED,
                         'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
@@ -326,8 +326,7 @@ class PostController extends Controller
                     ]
                 ]
             );
-        }
-        else return response()->json(
+        } else return response()->json(
             [
                 'code' => ApiStatusCode::LOST_CONNECTED,
                 'message' => 'Lỗi mất kết nối DB/ hoặc lỗi thực thi câu lệnh DB'
@@ -335,10 +334,11 @@ class PostController extends Controller
         );
     }
 
-    public function getPost(Request $request) {
+    public function getPost(Request $request)
+    {
 
         $post_id = $request->query('id');
-    	$post = Post::where('id', $post_id)->first();
+        $post = Post::where('id', $post_id)->first();
 
         if (!$post) {
             return response()->json([
@@ -348,28 +348,29 @@ class PostController extends Controller
         }
         $images = $post->images;
         $videos = $post->videos;
-    	$user = User::where('id', $post->user_id)->first();
+        $user = User::where('id', $post->user_id)->first();
 
-    	return response()->json([
-    		'code' => ApiStatusCode::OK,
-    		'message' => 'Lấy bài viết thành công',
-    		'data' => [
-    			'id' => $post->id,
-    			'described' => $post->described,
-    			'created' => $post->created_at,
-    			'modified' => $post->updated_at,
-    			'like' => $post->like
-    		],
-    		'image' => $images,
+        return response()->json([
+            'code' => ApiStatusCode::OK,
+            'message' => 'Lấy bài viết thành công',
+            'data' => [
+                'id' => $post->id,
+                'described' => $post->described,
+                'created' => $post->created_at,
+                'modified' => $post->updated_at,
+                'like' => $post->like
+            ],
+            'image' => $images,
             'video' => $videos,
-    		'author' => $user
-    	]);
+            'author' => $user
+        ]);
     }
 
-    public function deletePost(Request $request) {
+    public function deletePost(Request $request)
+    {
 
         $post_id = $request->query('id');
-    	$post = Post::where('id', $post_id)->first();
+        $post = Post::where('id', $post_id)->first();
 
         if (!$post) {
             return response()->json([
@@ -385,9 +386,13 @@ class PostController extends Controller
         }
     }
 
-    public function getListPost(Request $request) {
+    public function getListPost(Request $request)
+    {
         $token = $request->query('token');
         $user_id = $request->query('user_id');
+        if ($user_id == '') {
+            $user_id = $request->user()->id;
+        }
         $in_campaign = $request->query('in_campaign');
         $campaign_id = $request->query('campaign_id');
         $latitude = $request->query('latitude');
@@ -397,9 +402,10 @@ class PostController extends Controller
         $count = $request->query('count');
 
         $list_posts = Post::where('id', '>', $last_id)
-                        ->orderBy('id', 'desc')
-                        ->limit($count)
-                        ->get();
+            ->where("user_id", $user_id)
+            ->orderBy('id', 'desc')
+            ->limit($count)
+            ->get();
         $new_last_id = $list_posts->first()->id;
 
         return response()->json([
@@ -412,17 +418,18 @@ class PostController extends Controller
         ]);
     }
 
-    public function checkNewItem(Request $request) {
+    public function checkNewItem(Request $request)
+    {
         $last_id = $request->query('last_id');
         $category_id = $request->query('category_id');
 
         $list_posts = Post::where('id', '>', $last_id)
-                        ->orderBy('id', 'desc')
-                        ->get();
+            ->orderBy('id', 'desc')
+            ->get();
         $new_last_id = $list_posts->first()->id;
 
 
-        if($list_posts) {
+        if ($list_posts) {
             return response()->json([
                 'code' => ApiStatusCode::OK,
                 'message' => 'Lấy danh sách bài viết mới thành công',

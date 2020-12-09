@@ -54,7 +54,7 @@ class SearchController extends Controller
         $count = (int)$count;
         $result = [];
 
-        $postBySearch = Post::where('content', 'LIKE', "%$keyword%")->get();
+        $postBySearch = Post::where('described', 'LIKE', "%$keyword%")->get();
 
         $search = new Search ([
             'user_id' => $user->id,
@@ -77,7 +77,7 @@ class SearchController extends Controller
                     'image' => $item->image_link,
                     'video' => $item->video_link,
                     'like' => $item->like,
-                    'described' => $item->content,
+                    'described' => $item->described,
                     'comment' => Comment::where('id', $item->id)->count(),
                     'author' => User::where('id', $item->user_id)->get('id', 'username', 'avatar'),
 
@@ -102,7 +102,7 @@ class SearchController extends Controller
 
         $user = $request->user();
 
-        if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
+        if ($user_id == '' || (int)$user_id < 0) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid"
