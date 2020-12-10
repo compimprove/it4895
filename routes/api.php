@@ -52,7 +52,7 @@ Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked'])->group(funct
     Route::post('message/{userId2}', 'ChatController@sendMessage');
     Route::post('report/{id}', 'UserReportPostController@reportPost')->name("report_post");
     Route::post('like/add/{post_id}', 'UserLikePostController@likePost')->name("like_post");
-    Route::get('comment/{id}', 'CommentController@getComment')->name("get_comment");
+    Route::get('comment', 'CommentController@getComment')->name("get_comment");
     Route::post('comment/add/{id}', 'CommentController@addComment')->name("set_comment");
     Route::post("user/block/{user_id}", "UserController@setBlock")->name("set_block");
 

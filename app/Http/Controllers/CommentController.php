@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CommonResponse;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Comment;
@@ -73,8 +74,13 @@ class CommentController extends Controller
         );
     }
 
-    public function getComment($id)
+    public function getComment(Request $request)
     {
+        $id = $request->query("id");
+        if ($id == "") {
+            return CommonResponse::getResponse(1004);
+        }
+        $id = (int) $id;
         $post = Post::where('id', $id)->first();
         $comments = Comment::where('post_id', $id)->get();
         foreach ($comments as $comment) {
