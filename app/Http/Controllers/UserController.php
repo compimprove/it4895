@@ -228,41 +228,34 @@ class UserController extends Controller
         }
     }
 
-    public function getInfo(Request $request, $id)
+    public function getInfo(Request $request)
     {
-        $user = $request->user();
-        if ($user->id != $id) {
-            return [
-                "code" => ApiStatusCode::NOT_VALIDATE,
-                "message" => "User is not validated"
-            ];
-        }
-        if ($user == null) {
-            return [
-                "code" => 9994,
-                "message" => "User not found"
-            ];
-        } else if (false) {
-            // nguoi dung $id chan tai khoan nguoi dung request
+        $id = $request->query("id");
+        if ($id == "") {
+            $user = $request->user();
+            $id = $user->id;
         } else {
-            return [
-                "code" => 1000,
-                "message" => "OK",
-                "data" => [
-                    "id" => $user["id"],
-                    "username" => $user["name"],
-                    "created" => $user["created_at"],
-                    "avatar" => $user["avatar"],
-                    "cover_image" => $user["cover_image"],
-                    "address" => $user["address"],
-                    "city" => $user["city"],
-                    "country" => $user["country"],
-                    "listing" => -1, // list friends
-                    "is_friend" => -1,
-                    "online" => false
-                ]
-            ];
+            $id = (int)$id;
+            $user = User::find($id);
         }
+        return [
+            "code" => 1000,
+            "message" => "OK",
+            "data" => [
+                "id" => $user["id"],
+                "username" => $user["name"],
+                "created" => $user["created_at"],
+                "avatar" => $user["avatar"],
+                "cover_image" => $user["cover_image"],
+                "address" => $user["address"],
+                "city" => $user["city"],
+                "country" => $user["country"],
+                "listing" => -1, // list friends
+                "is_friend" => -1,
+                "online" => false
+            ]
+        ];
+
     }
 
     public function setReadNotification(Request $request)
