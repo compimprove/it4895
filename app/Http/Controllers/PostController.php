@@ -159,21 +159,22 @@ class PostController extends Controller
         );
     }
 
-    public function editPost(Request $request, $id)
+    public function editPost(Request $request)
     {
-
+        $id = $request->query("id");
         $validator = Validator::make($request->all(), [
             'video' => 'max:10000|nullable',
             'image' => 'max:1024|nullable'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails() || $id == "") {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 'message' => 'Parameter type is invalid',
                 'data' => $validator->errors()
             ]);
         }
+        $id = (int) $id;
 
         if ($request->hasFile('image') && $request->hasFile('video')) {
             return response()->json([

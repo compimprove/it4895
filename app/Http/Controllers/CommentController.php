@@ -14,10 +14,11 @@ use DB;
 
 class CommentController extends Controller
 {
-    public function addComment(Request $request, $id)
+    public function addComment(Request $request)
     {
         $validator = Validator::make($request->query(), [
-            'described' => 'required'
+            'described' => 'required',
+            'id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -26,24 +27,24 @@ class CommentController extends Controller
                 'message' => 'Số lượng parameter không dầy đủ',
                 'data' => $validator->errors()
             ]);
-        } else {
-            $validator = Validator::make($request->query(), [
-                'described' => 'string'
+        }
+        $id = (int) $request->query("id");
+        $validator = Validator::make($request->query(), [
+            'described' => 'string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                'message' => 'Parameter type is invalid',
+                'data' => $validator->errors()
             ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'code' => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    'message' => 'Parameter type is invalid',
-                    'data' => $validator->errors()
-                ]);
-            } else {
-                $post = Post::find($id);
-                if ($post == null) {
-                    return [
-                        "code" => ApiStatusCode::NOT_EXISTED,
-                        "message" => "Bài viết không tồn tại"
-                    ];
-                }
+        } else {
+            $post = Post::find($id);
+            if ($post == null) {
+                return [
+                    "code" => ApiStatusCode::NOT_EXISTED,
+                    "message" => "Bài viết không tồn tại"
+                ];
             }
         }
         $user_id = $request->user()->id;
@@ -80,7 +81,7 @@ class CommentController extends Controller
         if ($id == "") {
             return CommonResponse::getResponse(1004);
         }
-        $id = (int) $id;
+        $id = (int)$id;
         $post = Post::where('id', $id)->first();
         $comments = Comment::where('post_id', $id)->get();
         foreach ($comments as $comment) {

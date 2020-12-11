@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Validator;
 class UserLikePostController extends Controller
 {
     //
-    public function likePost(Request $request, $post_id)
+    public function likePost(Request $request )
     {
+        $post_id = (int)$request->query("post_id");
         $user = $request->user();
         if (UserLikePost::where("user_id", $user->id)->where("post_id", $post_id)->exists()) return [
             "code" => ApiStatusCode::NO_DATA,

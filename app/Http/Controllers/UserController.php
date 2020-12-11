@@ -431,8 +431,9 @@ class UserController extends Controller
         ];
     }
 
-    public function setBlock(Request $request, $user_id)
+    public function setBlock(Request $request)
     {
+        $user_id = (int)$request->query("user_id");
         $validator = Validator::make($request->query(), [
             "type" => "required|numeric"
         ]);

@@ -35,7 +35,7 @@ Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked'])->group(funct
     Route::post('change_info_after_signup', 'UserController@changeInfoAfterSignup')->name("change_info_after_signup");
 
     Route::post('add_post', 'PostController@addPost')->name("add_post");
-    Route::post('edit_post/{id}', 'PostController@editPost')->name("edit_post");
+    Route::post('edit_post', 'PostController@editPost')->name("edit_post");
     Route::get('get_post', 'PostController@getPost')->name("get_post");
     Route::post('delete_post', 'PostController@deletePost')->name("delete_post");
     Route::get('get_list_posts', 'PostController@getListPost')->name("get_list_posts");
@@ -48,13 +48,13 @@ Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked'])->group(funct
     Route::post('messages/set_read_message', 'ChatController@setReadMessage')->name("set_read_message");
     Route::post('messages/delete_message', 'ChatController@deleteMessage')->name("delete_message");
     Route::post('messages/delete_conversation', 'ChatController@deleteConversation')->name("delete_conversation");
-    Route::get('message/{userId2}', 'ChatController@fetchAllMessages');
-    Route::post('message/{userId2}', 'ChatController@sendMessage');
-    Route::post('report/{id}', 'UserReportPostController@reportPost')->name("report_post");
-    Route::post('like/add/{post_id}', 'UserLikePostController@likePost')->name("like_post");
+    Route::get('message', 'ChatController@fetchAllMessages');
+    Route::post('message', 'ChatController@sendMessage');
+    Route::post('report', 'UserReportPostController@reportPost')->name("report_post");
+    Route::post('like/add', 'UserLikePostController@likePost')->name("like_post");
     Route::get('comment', 'CommentController@getComment')->name("get_comment");
-    Route::post('comment/add/{id}', 'CommentController@addComment')->name("set_comment");
-    Route::post("user/block/{user_id}", "UserController@setBlock")->name("set_block");
+    Route::post('comment/add', 'CommentController@addComment')->name("set_comment");
+    Route::post("user/block", "UserController@setBlock")->name("set_block");
 
     Route::post('search', 'SearchController@search')->name("search");
     Route::post('get_saved_search', 'SearchController@getSavedSearch')->name("get_saved_search");
@@ -71,13 +71,3 @@ Route::get('get_verify_code', 'AuthController@getVerifyCode')->name("get_verify_
 Route::post('testSaveFile', 'UserController@testSaveFile');
 Route::post('testDeleteFile', 'UserController@testDeleveFile');
 Route::get('test', 'PostController@test');
-
-//Route::post('post/add', 'PostController@addPost')->name("add_post");
-//Route::get('post/{id}', 'PostController@getPost')->name("get_post");
-//Route::get('post/delete/{id}', 'PostController@deletePost')->name("delete_post");
-//Route::post('post/addComment/{id}','PostController@addComment');
-
-
-//Route::get('comment/delete/{id}', 'CommentController@deleteComment');
-//Route::get('like/{id}', 'UserLikePostController@getlikePost');
-//Route::get('dislike/{id}','UserLikePostController@dislikePost');

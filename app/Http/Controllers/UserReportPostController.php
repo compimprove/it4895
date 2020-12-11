@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\Validator;
 class UserReportPostController extends Controller
 {
     //
-    public function reportPost(Request $request, $id)
+    public function reportPost(Request $request)
     {
         $validator = Validator::make($request->query(), [
-            'described' => 'required'
+            'described' => 'required',
+            'id' => 'required',
         ]);
+        $id = (int)$request->query("id");
         if ($validator->fails()) {
             return response()->json([
                 'code' => ApiStatusCode::PARAMETER_NOT_ENOUGH,

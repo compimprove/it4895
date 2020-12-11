@@ -19,13 +19,15 @@ class ChatController extends Controller
         return view('chat', ['token' => $user->createToken(env('APP_KEY'))->plainTextToken, 'userId' => $user->id]);
     }
 
-    public function fetchAllMessages(Request $request, $userId2)
+    public function fetchAllMessages(Request $request)
     {
+        $userId2 = (int)$request->query("userId2");
         return Chat::getMessages($request->user()->id, $userId2);
     }
 
-    public function sendMessage(Request $request, $userId2)
+    public function sendMessage(Request $request)
     {
+        $userId2 = (int)$request->query("userId2");
         $chat = new Chat();
         $chat->content = $request->query('content');
         $chat->user_a_id = $request->user()->id;
@@ -48,7 +50,7 @@ class ChatController extends Controller
         }
         $count = (int)$count;
         $index = (int)$index;
-        $partnerId = (int) $partnerId;
+        $partnerId = (int)$partnerId;
         $chats = Chat::getMessagesFromOneToOne($request->user()->id, $partnerId);
         $chats = array_slice($chats, $count * $index, $count);
         $partner = User::find($partnerId);
@@ -160,7 +162,7 @@ class ChatController extends Controller
         } else {
             return [
                 "code" => ApiStatusCode::NOT_EXISTED,
-                "message" => "Tin nhắn Id ".$chatId." không thuộc của userId ".$request->user()->id." và userId ".$partnerId
+                "message" => "Tin nhắn Id " . $chatId . " không thuộc của userId " . $request->user()->id . " và userId " . $partnerId
             ];
         }
     }
@@ -193,7 +195,7 @@ class ChatController extends Controller
         } else {
             return [
                 "code" => ApiStatusCode::NOT_EXISTED,
-                "message" => "Tin nhắn Id ".$chatId." không thuộc của userId ".$request->user()->id." và userId ".$partnerId
+                "message" => "Tin nhắn Id " . $chatId . " không thuộc của userId " . $request->user()->id . " và userId " . $partnerId
             ];
         }
 
@@ -234,7 +236,7 @@ class ChatController extends Controller
         } else {
             return [
                 "code" => ApiStatusCode::NOT_EXISTED,
-                "message" => "Tin nhắn Id ".$chatId." không thuộc của userId ".$request->user()->id." và userId ".$partnerId
+                "message" => "Tin nhắn Id " . $chatId . " không thuộc của userId " . $request->user()->id . " và userId " . $partnerId
             ];
         }
 
