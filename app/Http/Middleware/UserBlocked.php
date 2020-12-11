@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\ApiStatusCode;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class UserBlocked
     {
         if ($request->user()->isBlocked()) {
             return response()->json([
-                "code" => 9995,
+                "code" => ApiStatusCode::NOT_VALIDATE,
                 "message" => "User is blocked"
             ]);
         } else {

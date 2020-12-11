@@ -239,7 +239,7 @@ class UserController extends Controller
             $user = User::find($id);
         }
         return [
-            "code" => 1000,
+            "code" => ApiStatusCode::OK,
             "message" => "OK",
             "data" => [
                 "id" => $user["id"],
@@ -358,7 +358,7 @@ class UserController extends Controller
             $user["link"] = $request->query("link");
             $user->save();
             return [
-                "code" => 1000,
+                "code" => ApiStatusCode::OK,
                 "message" => "OK",
                 "data" => [
                     "avatar" => Storage::url($linkAvatar),
@@ -379,7 +379,7 @@ class UserController extends Controller
         ]);
         if ($fileValidator->fails()) {
             return [
-                "code" => 1006,
+                "code" => ApiStatusCode::FILE_SIZE_TOO_BIG,
                 "message" => "File size is too big",
             ];
         } else if (strcmp($user->phone_number, $request->query("username")) == 0) {
@@ -397,7 +397,7 @@ class UserController extends Controller
             }
             $user->save();
             return [
-                "code" => 1000,
+                "code" => ApiStatusCode::OK,
                 "message" => "OK",
                 "data" => [
                     "id" => $user->id,
@@ -425,7 +425,7 @@ class UserController extends Controller
             }
         }, $blocks->toArray());
         return [
-            "code" => 1000,
+            "code" => ApiStatusCode::OK,
             "message" => "OK",
             "data" => $blocks
         ];

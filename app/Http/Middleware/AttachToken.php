@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\ApiStatusCode;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,7 @@ class AttachToken
             return $next($request);
         } else {
             return response([
-                "code" => 1004,
+                "code" => ApiStatusCode::PARAMETER_NOT_VALID,
                 "message" => "Parameter value is not valid"
             ]);
         }

@@ -138,14 +138,14 @@ class ChatController extends Controller
         $partner = User::find($partnerId);
         if ($partner == null) {
             return [
-                "code" => 9994,
+                "code" => ApiStatusCode::NO_DATA,
                 "message" => "User not found"
             ];
         }
         $chat = Chat::find($chatId);
         if ($chat == null) {
             return [
-                "code" => 9994,
+                "code" => ApiStatusCode::NO_DATA,
                 "message" => "Conversation not found"
             ];
         }
@@ -180,7 +180,7 @@ class ChatController extends Controller
         $chat = Chat::find($chatId);
         if ($chat == null) {
             return [
-                "code" => 9994,
+                "code" => ApiStatusCode::NO_DATA,
                 "message" => "Conversation not found"
             ];
         }
@@ -214,14 +214,14 @@ class ChatController extends Controller
         $partner = User::find($partnerId);
         if ($partner == null) {
             return [
-                "code" => 9994,
+                "code" => ApiStatusCode::NO_DATA,
                 "message" => "User not found"
             ];
         }
         $chat = Chat::find($chatId);
         if ($chat == null) {
             return [
-                "code" => 9994,
+                "code" => ApiStatusCode::NO_DATA,
                 "message" => "Conversation not found"
             ];
         }

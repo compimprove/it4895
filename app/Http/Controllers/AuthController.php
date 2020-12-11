@@ -53,7 +53,7 @@ class AuthController extends Controller
         if ($this->checkPasswordCorrect($user, $password)) {
             $user->tokens()->delete();
             return [
-                "code" => 1000,
+                "code" => ApiStatusCode::OK,
                 "message" => "OK",
                 "data" => [
                     "id" => $user->id,
@@ -111,7 +111,7 @@ class AuthController extends Controller
             ]);
             if ($phoneUniqueValidator->fails()) {
                 return [
-                    "code" => 9996,
+                    "code" => ApiStatusCode::USER_EXISTED,
                     "message" => "User existed"
                 ];
             } else {
@@ -131,7 +131,7 @@ class AuthController extends Controller
         ]);
         $user->save();
         return [
-            "code" => 1000,
+            "code" => ApiStatusCode::OK,
             "message" => "OK"
         ];
     }
@@ -141,7 +141,7 @@ class AuthController extends Controller
         $user = $request->user();
         if ($user["is_blocked"]) {
             return [
-                "code" => 9995,
+                "code" => ApiStatusCode::NOT_VALIDATE,
                 "message" => "User is not validated"
             ];
         }
@@ -166,7 +166,7 @@ class AuthController extends Controller
             $user->changePassword($request->query("new_password"));
             $user->save();
             return [
-                "code" => 1000,
+                "code" => ApiStatusCode::OK,
                 "message" => "OK"
             ];
         }
@@ -176,7 +176,7 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
         return response([
-            "code" => 1000,
+            "code" => ApiStatusCode::OK,
             "message" => "OK"
         ]);
     }
@@ -212,7 +212,7 @@ class AuthController extends Controller
                 $user->verified_email_at = new \DateTime();
                 $user->save();
                 return [
-                    "code" => 1000,
+                    "code" => ApiStatusCode::OK,
                     "message" => "OK",
                     "data" => [
                         "id" => $user->id,

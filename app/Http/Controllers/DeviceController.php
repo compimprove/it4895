@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ApiStatusCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,7 +12,7 @@ class DeviceController extends Controller
     {
         if ($request->user()["is_blocked"]) {
             return [
-                "code" => 9995,
+                "code" => ApiStatusCode::NOT_VALIDATE,
                 "message" => "User is not validated"
             ];
         }
@@ -27,7 +28,7 @@ class DeviceController extends Controller
             ];
         } else {
             return [
-                "code" => 1000,
+                "code" => ApiStatusCode::OK,
                 "message" => "OK"
             ];
         }
