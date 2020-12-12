@@ -17,8 +17,8 @@ class DeviceController extends Controller
             ];
         }
         $validator = Validator::make($request->query(), [
-            'device_token' => 'required|uuid',
-            'device_type' => 'required'
+            'devtype' => 'required|uuid',
+            'devtoken' => 'required'
         ]);
         if ($validator->fails()) {
             return [
