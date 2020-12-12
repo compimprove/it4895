@@ -19,7 +19,7 @@ class DeviceController extends Controller
             return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
         }
         $validator = Validator::make($request->query(), [
-            'devtype' => 'uuid'
+            'devtoken' => 'uuid'
         ]);
         if ($validator->fails()) {
             return [
