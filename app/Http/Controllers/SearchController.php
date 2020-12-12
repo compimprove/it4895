@@ -50,7 +50,7 @@ class SearchController extends Controller
         $count = (int)$count;
         $result = [];
 
-        $postBySearch = Post::where('described', 'LIKE', "%$keyword%")->get();
+        $postBySearch = Post::where('described', 'LIKE', "%$keyword%")->get()->toArray();
 
         $search = new Search ([
             'user_id' => $user->id,
@@ -68,14 +68,17 @@ class SearchController extends Controller
         } else {
             $postBySearch = array_slice($postBySearch, $count * $index, $count);
             foreach ($postBySearch as $item) {
+                $user = User::find($item["user_id"]);
                 array_push($result, [
-                    'id' => $item->id,
-                    'image' => $item->image_link,
-                    'video' => $item->video_link,
-                    'like' => $item->like,
-                    'described' => $item->described,
-                    'comment' => Comment::where('id', $item->id)->count(),
-                    'author' => User::where('id', $item->user_id)->get('id', 'username', 'avatar'),
+                    'id' => $item["id"],
+                    'like' => $item["like"],
+                    'described' => $item["described"],
+                    'comment' => Comment::where('id', $item["id"])->count(),
+                    'author' => [
+                        "id" => $user->id,
+                        "username" => $user["name"],
+                        "avatar" => $user["avatar"]
+                    ],
 
                 ]);
             };
