@@ -101,47 +101,36 @@ class SearchController extends Controller
 
         $user = $request->user();
 
-        if ($user_id == '' || (int)$user_id < 0) {
+        if ($user_id == "") {
+            $user_id = $user->id;
+        }
+        if ($index == '' || $count == '') {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid"
             ];
-        } else {
-            if ($user->isBlocked()) {
-                return [
-                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid"
-                ];
-            }
-
-            if ($index == '' || $count == '') {
-                return [
-                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid"
-                ];
-            }
-
-            if ((int)$index < 0 || (int)$count < 0) {
-                return [
-                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid"
-                ];
-            }
         }
+
+        if ((int)$index < 0 || (int)$count < 0) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        }
+
 
         $index = (int)$index;
         $count = (int)$count;
 
         $result = [];
 
-        $getSavedSearch = array_slice(Search::find()->get(), $count * $index, $count);
+        $getSavedSearch = array_slice(Search::where("user_id", $user_id)->get()->toArray(), $count * $index, $count);
 
         foreach ($getSavedSearch as $item) {
             array_push($result, [
-                'id' => $item->id,
-                'keyword' => $item->keyword,
-                'created' => (string)strtotime($item->created_at)
-
+                'id' => $item["user_id"],
+                'keyword' => $item["keyword"],
+                'created' => (string)strtotime($item["created_at"])
             ]);
         };
         return [
