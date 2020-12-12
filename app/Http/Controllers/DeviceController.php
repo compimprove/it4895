@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ApiStatusCode;
+use App\Enums\CommonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,15 +11,15 @@ class DeviceController extends Controller
 {
     public function setDeviceInfo(Request $request)
     {
-        if ($request->user()["is_blocked"]) {
-            return [
-                "code" => ApiStatusCode::NOT_VALIDATE,
-                "message" => "User is not validated"
-            ];
+        $validatorRequire = Validator::make($request->query(), [
+            'devtype' => 'required',
+            'devtoken' => 'required'
+        ]);
+        if ($validatorRequire->fails()) {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
         }
         $validator = Validator::make($request->query(), [
-            'devtype' => 'required|uuid',
-            'devtoken' => 'required'
+            'devtype' => 'uuid'
         ]);
         if ($validator->fails()) {
             return [
