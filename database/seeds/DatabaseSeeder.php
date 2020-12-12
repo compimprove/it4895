@@ -19,12 +19,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            PostSeeder::class,
             ChatSeeder::class,
         ]);
-        $posts = factory(Post::class, 15)->make();
-        foreach ($posts as $post) {
-            $post->save();
-        }
         $comments = factory(Comment::class, 20)->make();
         foreach ($comments as $comment) {
             $comment->save();

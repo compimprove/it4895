@@ -45,7 +45,7 @@ class UserTest extends TestCase
         $data = [
             "id" => $user["id"],
             "username" => $user["name"],
-            "created" => $user["created_at"],
+            "created" => (string) strtotime($user["created_at"]),
             "avatar" => $user["avatar"],
             "cover_image" => $user["cover_image"],
             "address" => $user["address"],

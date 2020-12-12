@@ -23,8 +23,10 @@ $factory->define(User::class, function (Faker $faker) {
     for ($i = 0; $i < 10; $i++) {
         $phoneNumber .= (string)rand(0, 9);
     }
+    $randImage = rand(200, 300);
     return [
         'name' => $faker->name,
+        'avatar' => 'https://picsum.photos/' . $randImage,
         'email' => $faker->safeEmail,
         'phone_number' => $phoneNumber,
         'password' => Hash::make('123456')

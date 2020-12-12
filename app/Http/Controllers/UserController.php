@@ -44,7 +44,7 @@ class UserController extends Controller
                     "username" => $item->name,
                     "avatar" => $item->avatar,
                     "same_friends" => $user->getSameFriends($item->id),
-                    "created" => $item->created_at,
+                    "created" => (string)strtotime($item->created_at),
                 ]);
             };
             $result = array_slice($result, $count * $index, $count);
@@ -86,7 +86,7 @@ class UserController extends Controller
                     "username" => $item->name,
                     "avatar" => $item->avatar,
                     "same_friends" => $user->getSameFriends($item->id),
-                    "created" => $item->created_at,
+                    "created" => (string)strtotime($item->created_at),
                 ]);
             };
             return [
@@ -126,7 +126,7 @@ class UserController extends Controller
                     "username" => $item->name,
                     "avatar" => $item->avatar,
                     "same_friends" => $user->getSameFriends($item->id),
-                    "created" => $item->created_at,
+                    "created" => (string) strtotime($item->created_at),
                 ]);
             };
             return [
@@ -244,7 +244,7 @@ class UserController extends Controller
             "data" => [
                 "id" => $user["id"],
                 "username" => $user["name"],
-                "created" => $user["created_at"],
+                "created" => (string) strtotime($user["created_at"]),
                 "avatar" => $user["avatar"],
                 "cover_image" => $user["cover_image"],
                 "address" => $user["address"],
@@ -403,7 +403,7 @@ class UserController extends Controller
                     "id" => $user->id,
                     "username" => $user->name,
                     "phonenumber" => $user["phone_number"],
-                    "created" => $user["created_at"],
+                    "created" => (string) strtotime($user["created_at"]),
                     "avatar" => Storage::url($linkAvatar),
                 ]
             ];

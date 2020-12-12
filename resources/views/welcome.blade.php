@@ -11,7 +11,7 @@ $allApiName = [
     "search", "get_saved_search", "del_saved_search",
     "get_user_friends", "get_user_info",
     "set_user_info",
-    "get_list_videos",//"check_new_version",
+    "get_list_videos","check_new_version",
     "get_verify_code",
     "get_conversation", "delete_message", "get_list_conversation", "delete_conversation", "set_read_message",
 

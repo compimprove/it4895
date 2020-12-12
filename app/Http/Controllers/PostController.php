@@ -357,8 +357,8 @@ class PostController extends Controller
             'data' => [
                 'id' => $post->id,
                 'described' => $post->described,
-                'created' => $post->created_at,
-                'modified' => $post->updated_at,
+                'created' => (string) strtotime($post->created_at),
+                'modified' => (string) strtotime($post->updated_at),
                 'like' => $post->like
             ],
             'image' => $images,

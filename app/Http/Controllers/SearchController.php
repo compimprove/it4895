@@ -141,7 +141,7 @@ class SearchController extends Controller
             array_push($result, [
                 'id' => $item->id,
                 'keyword' => $item->keyword,
-                'created' => $item->created_at
+                'created' => (string) strtotime($item->created_at)
 
             ]);
         };

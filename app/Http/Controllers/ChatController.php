@@ -60,7 +60,7 @@ class ChatController extends Controller
                 "message" => $chat->content,
                 "message_id" => $chat->id,
                 "unread" => $chat->has_read ? 0 : 1,
-                "created" => $chat->created_at,
+                "created" => (string) strtotime($chat->created_at),
                 "sender" => [
                     "id" => $partner["id"],
                     "username" => $partner["name"],
@@ -106,7 +106,7 @@ class ChatController extends Controller
                 ],
                 "lastmessage" => [
                     "message" => $lastMessage->content,
-                    "created" => $lastMessage->created_at,
+                    "created" => (string) strtotime($lastMessage->created_at),
                     "unread" => $lastMessage->has_read ? 0 : 1
                 ]
             ]);

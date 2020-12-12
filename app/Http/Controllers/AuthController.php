@@ -16,6 +16,10 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    private function passwordRegexFail(string $password): bool
+    {
+        return preg_match("/([A-Za-z0-9])\w+/", $password, $matches) != 1 || $matches[0] != $password;
+    }
     public function getToken(Request $request)
     {
 
@@ -33,6 +37,12 @@ class AuthController extends Controller
                 "message" => "Parameter type is invalid"
             ];
         }
+        if ($this->passwordRegexFail($password)) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        };
         $validator = Validator::make($request->query(), [
             'phonenumber' => 'required|digits:10',
             'password' => 'required|string|max:10|min:6',
@@ -90,6 +100,12 @@ class AuthController extends Controller
                 "message" => "Parameter type is invalid"
             ];
         }
+        if ($this->passwordRegexFail($data["password"])) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        };
         if (!str_starts_with($data["phone_number"], "0")) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,

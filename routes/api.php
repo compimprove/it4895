@@ -61,12 +61,14 @@ Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked'])->group(funct
     Route::post('del_saved_search', 'SearchController@delSavedSearch')->name("del_saved_search");
 
     Route::post('get_list_videos', 'VideoController@getListVideos')->name("get_list_videos");
+    Route::post('check_new_version', 'SettingsController@checkNewVersion')->name("check_new_version");
 });
 
 Route::post('login', 'AuthController@getToken')->name("Login");
 Route::post('signup', 'AuthController@register')->name("Signup");
 Route::post('check_verify_code', 'AuthController@checkVerifyCode')->name("check_verify_code");
 Route::get('get_verify_code', 'AuthController@getVerifyCode')->name("get_verify_code");
+
 
 Route::post('testSaveFile', 'UserController@testSaveFile');
 Route::post('testDeleteFile', 'UserController@testDeleveFile');
