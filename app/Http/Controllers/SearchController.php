@@ -22,33 +22,29 @@ class SearchController extends Controller
         $keyword = $request->query("keyword");
         $user = $request->user();
 
-        if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
+        if ($user_id == "") {
+            $user_id = $user->id;
+        } else if (!User::find($user_id) || User::find($user_id)->isBlocked()) {
             return [
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid"
             ];
-        } else {
-            if (!User::find($user_id) || User::find($user_id)->isBlocked()) {
-                return [
-                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid"
-                ];
-            }
-
-            if ($index == '' || $count == '' || $keyword == '') {
-                return [
-                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid"
-                ];
-            }
-
-            if ((int)$index < 0 || (int)$count < 0) {
-                return [
-                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid"
-                ];
-            }
         }
+
+        if ($index == '' || $count == '' || $keyword == '') {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        }
+
+        if ((int)$index < 0 || (int)$count < 0) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
+            ];
+        }
+
 
         $index = (int)$index;
         $count = (int)$count;
@@ -141,7 +137,7 @@ class SearchController extends Controller
             array_push($result, [
                 'id' => $item->id,
                 'keyword' => $item->keyword,
-                'created' => (string) strtotime($item->created_at)
+                'created' => (string)strtotime($item->created_at)
 
             ]);
         };
