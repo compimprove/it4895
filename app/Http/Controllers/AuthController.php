@@ -22,12 +22,19 @@ class AuthController extends Controller
     }
     public function getToken(Request $request)
     {
-
+        $validatorRequire = Validator::make($request->query(), [
+            'phonenumber' => 'required',
+            'password' => 'required',
+            'uuid' => 'required'
+        ]);
+        if ($validatorRequire->fails()) {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
+        }
         $phoneNumber = $request->query("phonenumber");
         $password = $request->query("password");
         if ($phoneNumber == "" && $password == "") {
             return [
-                "code" => ApiStatusCode::PARAMETER_NOT_ENOUGH,
+                "code" => ApiStatusCode::PARAMETER_NOT_VALID,
                 "message" => "Parameter is not enough"
             ];
         }
@@ -44,9 +51,9 @@ class AuthController extends Controller
             ];
         };
         $validator = Validator::make($request->query(), [
-            'phonenumber' => 'required|digits:10',
-            'password' => 'required|string|max:10|min:6',
-            'uuid' => 'required|uuid'
+            'phonenumber' => 'digits:10',
+            'password' => 'string|max:10|min:6',
+            'uuid' => 'uuid'
         ]);
         if ($validator->fails()) {
             return [
