@@ -20,6 +20,7 @@ class AuthController extends Controller
     {
         return preg_match("/([A-Za-z0-9])\w+/", $password, $matches) != 1 || $matches[0] != $password;
     }
+
     public function getToken(Request $request)
     {
         $validatorRequire = Validator::make($request->query(), [
@@ -177,6 +178,11 @@ class AuthController extends Controller
                 "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
                 "message" => "Parameter type is invalid",
                 "data" => $validator->errors()
+            ];
+        } else if ($this->passwordRegexFail($request->query("password"))) {
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid"
             ];
         } else if (!$this->checkPasswordCorrect($user, $request->query("password"))) {
             return [
