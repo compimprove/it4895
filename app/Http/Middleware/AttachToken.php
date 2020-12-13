@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\ApiStatusCode;
+use App\Enums\CommonResponse;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -22,10 +23,7 @@ class AttachToken
             $request->headers->set("Authorization", "Bearer " . $token);
             return $next($request);
         } else {
-            return response([
-                "code" => ApiStatusCode::PARAMETER_NOT_VALID,
-                "message" => "Parameter value is not valid"
-            ]);
+            return CommonResponse::getResponse(ApiStatusCode::TOKEN_INVALID);
         }
     }
 }
