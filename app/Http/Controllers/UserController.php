@@ -139,7 +139,13 @@ class UserController extends Controller
             $index = (int)$index;
             $friends = $request->user()->getFriends();
             foreach ($friends as $friend) {
-                $suggestedFriends = array_merge($suggestedFriends, $friend->getFriends());
+                $userFriends = $friend->getFriends();
+                foreach ($userFriends as $id => $userFriend) {
+                    if ($userFriend["id"] == $user->id) {
+                        unset($userFriends[$id]);
+                    }
+                }
+                $suggestedFriends = array_merge($suggestedFriends, $userFriends);
             };
             $suggestedFriends = array_slice($suggestedFriends, $count * $index, $count);
             foreach ($suggestedFriends as $item) {
