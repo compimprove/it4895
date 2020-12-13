@@ -93,6 +93,14 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'phonenumber' => 'required',
+            'password' => 'required',
+            'uuid' => 'required'
+        ]);
+        if ($validatorRequire->fails()) {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
+        }
         $data = [];
         $data["phone_number"] = $request->query("phonenumber");
 
@@ -163,6 +171,13 @@ class AuthController extends Controller
 
     public function changePassword(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'password' => 'required',
+            'new_password' => 'required'
+        ]);
+        if ($validatorRequire->fails()) {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
+        }
         $user = $request->user();
         if ($user["is_blocked"]) {
             return [
@@ -171,8 +186,8 @@ class AuthController extends Controller
             ];
         }
         $validator = Validator::make($request->query(), [
-            'password' => 'required|string|max:10|min:6',
-            'new_password' => 'required|string|max:10|min:6'
+            'password' => 'string|max:10|min:6',
+            'new_password' => 'string|max:10|min:6'
         ]);
         if ($validator->fails()) {
             return [
@@ -213,22 +228,22 @@ class AuthController extends Controller
 
     public function checkVerifyCode(Request $request)
     {
-        $validator = Validator::make($request->query(), [
-            'phonenumber' => 'required|digits:10',
+        $validatorRequire = Validator::make($request->query(), [
+            'phonenumber' => 'required',
             'code_verify' => 'required',
         ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
+        $validator = Validator::make($request->query(), [
+            'phonenumber' => 'digits:10',
+        ]);
         if ($validator->fails()) {
-            if (Validator::make($request->query(), [
-                'code_verify' => 'required',
-            ])->fails()) {
-                return CommonResponse::getResponse(1002);
-            } else {
-                return [
-                    "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid",
-                    "data" => $validator->errors()
-                ];
-            }
+            return [
+                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
+                "message" => "Parameter type is invalid",
+                "data" => $validator->errors()
+            ];
         } else {
             $user = User::where("phone_number", $request->query("phonenumber"))->first();
             if ($user == null) {
@@ -255,8 +270,14 @@ class AuthController extends Controller
 
     public function getVerifyCode(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'phonenumber' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $validator = Validator::make($request->query(), [
-            'phonenumber' => 'required|digits:10',
+            'phonenumber' => 'digits:10',
         ]);
         if ($validator->fails()) {
             return CommonResponse::getResponse(1004);

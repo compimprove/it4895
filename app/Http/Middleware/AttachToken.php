@@ -6,6 +6,7 @@ use App\Enums\ApiStatusCode;
 use App\Enums\CommonResponse;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AttachToken
 {
@@ -18,6 +19,12 @@ class AttachToken
      */
     public function handle(Request $request, Closure $next)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'token' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $token = $request->query('token');
         if ($token != "") {
             $request->headers->set("Authorization", "Bearer " . $token);

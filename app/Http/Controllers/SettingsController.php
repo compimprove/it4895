@@ -7,24 +7,29 @@ use App\Enums\ApiStatusCode;
 use App\Enums\CommonResponse;
 use App\Settings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SettingsController extends Controller
 {
     public function setPushSetting(Request $request)
     {
         $settings = [
-            "like_comment" => null,
-            "from_friends" => null,
-            "requested_friend" => null,
-            "suggested_friend" => null,
-            "birthday" => null,
-            "video" => null,
-            "report" => null,
-            "sound_on" => null,
-            "notification_on" => null,
-            "vibrant_on" => null,
-            "led_on" => null
+            "like_comment" => 'required',
+            "from_friends" => 'required',
+            "requested_friend" => 'required',
+            "suggested_friend" => 'required',
+            "birthday" => 'required',
+            "video" => 'required',
+            "report" => 'required',
+            "sound_on" => 'required',
+            "notification_on" => 'required',
+            "vibrant_on" => 'required',
+            "led_on" => 'required'
         ];
+        $validatorRequire = Validator::make($request->query(), $settings);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         foreach ($settings as $setting => $value) {
             $queryValue = $request->query($setting);
             if ($queryValue == '' || ((int)$queryValue != 0 && (int)$queryValue != 1)) {
@@ -47,6 +52,12 @@ class SettingsController extends Controller
 
     public function checkNewVersion(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'last_update' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $lastUpdate = $request->query("last_update");
         $user = $request->user();
         if ($lastUpdate == "") {

@@ -10,6 +10,7 @@ use App\Friends;
 use App\Notification;
 use App\Service\IFileService;
 use App\User;
+use Facade\FlareClient\Api;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -25,6 +26,13 @@ class UserController extends Controller
 
     public function getRequestedFriends(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'index' => 'required',
+            'count' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $index = $request->query("index");
         $count = $request->query("count");
         if ($index == '' || $count == '') {
@@ -61,6 +69,13 @@ class UserController extends Controller
 
     public function getFriends(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'index' => 'required',
+            'count' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $userId = $request->query("user_id");
         $index = $request->query("index");
         $count = $request->query("count");
@@ -102,6 +117,13 @@ class UserController extends Controller
 
     public function getSuggestedFriends(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'index' => 'required',
+            'count' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $index = $request->query("index");
         $count = $request->query("count");
         if ($index == '' || $count == '') {
@@ -126,7 +148,7 @@ class UserController extends Controller
                     "username" => $item->name,
                     "avatar" => $item->avatar,
                     "same_friends" => $user->getSameFriends($item->id),
-                    "created" => (string) strtotime($item->created_at),
+                    "created" => (string)strtotime($item->created_at),
                 ]);
             };
             return [
@@ -142,6 +164,12 @@ class UserController extends Controller
 
     public function setRequestFriends(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'user_id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $user_id = $request->query("user_id");
         $user = $request->user();
         if ($user_id == '' || $user->id == (int)$user_id || (int)$user_id < 0) {
@@ -186,6 +214,13 @@ class UserController extends Controller
 
     public function setFriends(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'user_id' => 'required',
+            'is_accept' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $user = $request->user();
         if ($request->query("user_id") == '' || $request->query("is_accept") == '') {
             return [
@@ -230,6 +265,12 @@ class UserController extends Controller
 
     public function getInfo(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $id = $request->query("id");
         if ($id == "") {
             $user = $request->user();
@@ -244,7 +285,7 @@ class UserController extends Controller
             "data" => [
                 "id" => $user["id"],
                 "username" => $user["name"],
-                "created" => (string) strtotime($user["created_at"]),
+                "created" => (string)strtotime($user["created_at"]),
                 "avatar" => $user["avatar"],
                 "cover_image" => $user["cover_image"],
                 "address" => $user["address"],
@@ -260,6 +301,12 @@ class UserController extends Controller
 
     public function setReadNotification(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'notification_id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $notificationId = $request->query("notification_id");
         if ($notificationId == '') {
             return [
@@ -291,6 +338,13 @@ class UserController extends Controller
 
     public function getNotifications(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'index' => 'required',
+            'count' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $index = $request->query("index");
         $count = $request->query("count");
         if ($index == '' || $count == '') {
@@ -320,6 +374,17 @@ class UserController extends Controller
 
     public function setUserInfo(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'username' => 'required',
+            "description" => "required",
+            "address" => "required",
+            "city" => "required",
+            "country" => "required",
+            "link" => "required",
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $user = $request->user();
         $fileValidator = Validator::make($request->all(), [
             'avatar' => 'file|max:1024',
@@ -340,16 +405,22 @@ class UserController extends Controller
                 "data" => $validator->errors()
             ];
         } else {
-            if ($user->avatar != null) {
-                $this->fileService->deleteFile($user->avatar);
+            $linkAvatar = null;
+            $linkCoverImage = null;
+            if (!$fileValidator->fails()) {
+                if ($user->avatar != null) {
+                    $this->fileService->deleteFile($user->avatar);
+                }
+                if ($user->cover_image != null) {
+                    $this->fileService->deleteFile($user->cover_image);
+                }
+                $linkAvatar = $this->fileService->saveFile($request->file("avatar"));
+                $user->avatar = $linkAvatar;
+                $linkAvatar = Storage::url($linkAvatar);
+                $linkCoverImage = $this->fileService->saveFile($request->file("cover_image"));
+                $user->cover_image = $linkCoverImage;
+                $linkCoverImage = Storage::url($linkCoverImage);
             }
-            if ($user->cover_image != null) {
-                $this->fileService->deleteFile($user->cover_image);
-            }
-            $linkAvatar = $this->fileService->saveFile($request->file("avatar"));
-            $user->avatar = $linkAvatar;
-            $linkCoverImage = $this->fileService->saveFile($request->file("cover_image"));
-            $user->cover_image = $linkCoverImage;
             $user["name"] = $request->query("username");
             $user["description"] = $request->query("description");
             $user["address"] = $request->query("address");
@@ -361,8 +432,8 @@ class UserController extends Controller
                 "code" => ApiStatusCode::OK,
                 "message" => "OK",
                 "data" => [
-                    "avatar" => Storage::url($linkAvatar),
-                    "cover_image" => Storage::url($linkCoverImage),
+                    "avatar" => $linkAvatar,
+                    "cover_image" => $linkCoverImage,
                     "link" => $user->link,
                     "city" => $user->city,
                     "country" => $user->country,
@@ -403,7 +474,7 @@ class UserController extends Controller
                     "id" => $user->id,
                     "username" => $user->name,
                     "phonenumber" => $user["phone_number"],
-                    "created" => (string) strtotime($user["created_at"]),
+                    "created" => (string)strtotime($user["created_at"]),
                     "avatar" => Storage::url($linkAvatar),
                 ]
             ];
@@ -433,7 +504,18 @@ class UserController extends Controller
 
     public function setBlock(Request $request)
     {
-        $user_id = (int)$request->query("user_id");
+        $validatorRequire = Validator::make($request->query(), [
+            'user_id' => 'required',
+            'type' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
+        $user_id = $request->query("user_id");
+        $type = $request->query("type");
+        if ($user_id == "" || $type == "") {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
+        }
         $validator = Validator::make($request->query(), [
             "type" => "required|numeric"
         ]);
@@ -444,7 +526,7 @@ class UserController extends Controller
                 "data" => $validator->errors()
             ];
         } else {
-            $type = (int)$request->query("type");
+            $type = (int)$type;
             $user_id = (int)$user_id;
             if ($type != 0 && $type != 1) {
                 return [

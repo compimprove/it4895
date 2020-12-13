@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Chat;
 use App\Enums\ApiStatusCode;
+use App\Enums\CommonResponse;
 use App\Events\ChatEvent;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ChatController extends Controller
 {
@@ -21,6 +23,15 @@ class ChatController extends Controller
 
     public function fetchAllMessages(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'userId2' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
+        if ($request->query("userId2") == "") {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID));
+        }
         $userId2 = (int)$request->query("userId2");
         return Chat::getMessages($request->user()->id, $userId2);
     }
@@ -39,6 +50,14 @@ class ChatController extends Controller
 
     public function getConversation(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'partner_id' => 'required',
+            'index' => 'required',
+            'count' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $partnerId = $request->query("partner_id");
         $index = $request->query("index");
         $count = $request->query("count");
@@ -60,7 +79,7 @@ class ChatController extends Controller
                 "message" => $chat->content,
                 "message_id" => $chat->id,
                 "unread" => $chat->has_read ? 0 : 1,
-                "created" => (string) strtotime($chat->created_at),
+                "created" => (string)strtotime($chat->created_at),
                 "sender" => [
                     "id" => $partner["id"],
                     "username" => $partner["name"],
@@ -80,6 +99,13 @@ class ChatController extends Controller
 
     public function getListConversation(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'index' => 'required',
+            'count' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $index = $request->query("index");
         $count = $request->query("count");
         if ($index == '' || $count == '') {
@@ -106,7 +132,7 @@ class ChatController extends Controller
                 ],
                 "lastmessage" => [
                     "message" => $lastMessage->content,
-                    "created" => (string) strtotime($lastMessage->created_at),
+                    "created" => (string)strtotime($lastMessage->created_at),
                     "unread" => $lastMessage->has_read ? 0 : 1
                 ]
             ]);
@@ -127,6 +153,13 @@ class ChatController extends Controller
 
     public function setReadMessage(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'partner_id' => 'required',
+            'conversation_id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $partnerId = $request->query("partner_id");
         $chatId = $request->query("conversation_id");
         if ($partnerId == '' || $chatId == '') {
@@ -169,6 +202,13 @@ class ChatController extends Controller
 
     public function deleteMessage(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'partner_id' => 'required',
+            'message_id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $partnerId = $request->query("partner_id");
         $chatId = $request->query("message_id");
         if ($partnerId == '' || $chatId == '') {
@@ -203,6 +243,13 @@ class ChatController extends Controller
 
     public function deleteConversation(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'partner_id' => 'required',
+            'conversation_id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $partnerId = $request->query("partner_id");
         $chatId = $request->query("conversation_id");
         if ($partnerId == '' || $chatId == '') {

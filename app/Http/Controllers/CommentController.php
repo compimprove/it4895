@@ -77,6 +77,12 @@ class CommentController extends Controller
 
     public function getComment(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $id = $request->query("id");
         if ($id == "") {
             return CommonResponse::getResponse(1004);
@@ -112,12 +118,21 @@ class CommentController extends Controller
         }
     }
 
-    public function deleteComment($id)
+    public function deleteComment(Request $request)
     {
-        $comment = Comment::where('id', $id)->first();
-
+        $validatorRequire = Validator::make($request->query(), [
+            'id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
+        $id = $request->query("id");
+        if ($id == "") {
+            return CommonResponse::getResponse(1004);
+        }
+        $id = (int)$id;
+        $comment = Comment::find($id);
         if ($comment->delete()) {
-
             return response()->json([
                 'code' => ApiStatusCode::OK,
                 'message' => 'Xóa comment thành công'

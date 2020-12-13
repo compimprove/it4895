@@ -16,6 +16,12 @@ class UserLikePostController extends Controller
     //
     public function likePost(Request $request )
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $post_id = $request->query("id");
         if ($post_id == "") {
             return CommonResponse::getResponse(1004);
@@ -60,8 +66,15 @@ class UserLikePostController extends Controller
         );
     }
 
-    public function getlikePost($id)
+    public function getlikePost(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'id' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
+        $id = (int) $request->query("id");
         $post = Post::where('id', $id)->first();
         $like = UserLikePost::where('post_id', $id)->count();
 

@@ -16,7 +16,14 @@ class SearchController extends Controller
 {
     public function search(Request $request)
     {
-
+        $validatorRequire = Validator::make($request->query(), [
+            'index' => 'required',
+            'count' => 'required',
+            'keyword' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $user_id = $request->query('user_id');
         $index = $request->query("index");
         $count = $request->query("count");
@@ -96,6 +103,13 @@ class SearchController extends Controller
 
     public function getSavedSearch(Request $request)
     {
+        $validatorRequire = Validator::make($request->query(), [
+            'index' => 'required',
+            'count' => 'required',
+        ]);
+        if ($validatorRequire->fails()) {
+            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
+        }
         $index = $request->query("index");
         $count = $request->query("count");
         $user_id = $request->query('user_id');
