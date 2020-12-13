@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 
 use App\Enums\ApiStatusCode;
+use App\Enums\CommonResponse;
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Response;
@@ -14,10 +15,7 @@ class Authenticate extends Middleware
     {
         $this->authenticate($request, $guards);
         if ($request->user() == null) {
-            return response([
-                "code" => ApiStatusCode::PARAMETER_NOT_VALID,
-                "message" => "Parameter value is not valid"
-            ]);
+            return CommonResponse::getResponse(ApiStatusCode::TOKEN_INVALID);
         } else {
             return $next($request);
         }
