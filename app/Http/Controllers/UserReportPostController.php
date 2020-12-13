@@ -51,7 +51,7 @@ class UserReportPostController extends Controller
             return response()->json(
                 [
                     'code' => ApiStatusCode::OK,
-                    'message' => 'Report thành công',
+                    'message' => 'OK',
                     'data' => [
                         'post_id' => $id,
                         'user_id' => $user_id,

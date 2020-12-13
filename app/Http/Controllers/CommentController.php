@@ -101,7 +101,7 @@ class CommentController extends Controller
             // $user = User::find($post->user_id);
             return response()->json([
                 'code' => ApiStatusCode::OK,
-                'message' => 'Lấy comment bài viết thành công',
+                'message' => 'OK',
                 'data' => [
                     'post' => $post,
                     'comment' => $comments
