@@ -61,7 +61,6 @@ class User extends Authenticatable
     }
 
 
-
     public function getFriends()
     {
         $friendsInfo = Friends::where([
@@ -72,12 +71,17 @@ class User extends Authenticatable
             ["status", FriendStatus::ACCEPTED]
         ])->get();
         $friends = [];
+        $uniqueId = [];
         foreach ($friendsInfo as $friendInfo) {
             if ($friendInfo["user_id"] == $this->id) {
+                if (in_array($friendInfo["friend_id"], $uniqueId)) continue;
+                array_push($uniqueId, $friendInfo["friend_id"]);
                 $user = User::find($friendInfo["friend_id"]);
-                if ($user != null)
-                    array_push($friends, $user);
+                if ($user == null) continue;
+                array_push($friends, $user);
             } else if ($friendInfo["friend_id"] == $this->id) {
+                if (in_array($friendInfo["user_id"], $uniqueId)) continue;
+                array_push($uniqueId, $friendInfo["user_id"]);
                 $user = User::find($friendInfo["user_id"]);
                 if ($user != null)
                     array_push($friends, $user);
