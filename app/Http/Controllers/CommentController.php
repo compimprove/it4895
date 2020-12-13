@@ -28,7 +28,7 @@ class CommentController extends Controller
                 'data' => $validator->errors()
             ]);
         }
-        $id = (int) $request->query("id");
+        $id = (int)$request->query("id");
         $validator = Validator::make($request->query(), [
             'described' => 'string'
         ]);
@@ -91,6 +91,7 @@ class CommentController extends Controller
                 "name" => $author->name,
                 "avatar" => $author->avatar
             ];
+            unset ($comment['updated_at']);
         }
         if ($post == null) {
             return [
@@ -103,6 +104,7 @@ class CommentController extends Controller
                 'code' => ApiStatusCode::OK,
                 'message' => 'OK',
                 'data' => [
+                    'id' => $post->id,
                     'post' => $post,
                     'comment' => $comments
                 ],
