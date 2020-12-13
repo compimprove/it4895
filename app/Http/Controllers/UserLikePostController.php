@@ -70,7 +70,7 @@ class UserLikePostController extends Controller
             return response()->json([
 
                 'code' => ApiStatusCode::OK,
-                'message' => 'Lấy số like thành công',
+                'message' => 'OK',
                 'data' => [
                     'post_id' => $post,
                     'count_like' => $like
