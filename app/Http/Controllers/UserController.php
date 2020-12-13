@@ -140,13 +140,21 @@ class UserController extends Controller
             $friends = $request->user()->getFriends();
             foreach ($friends as $friend) {
                 $userFriends = $friend->getFriends();
-                foreach ($userFriends as $id => $userFriend) {
-                    if ($userFriend["id"] == $user->id) {
-                        unset($userFriends[$id]);
-                    }
-                }
+
                 $suggestedFriends = array_merge($suggestedFriends, $userFriends);
             };
+            $uniqueId = [];
+            foreach ($suggestedFriends as $id => $userFriend) {
+                if (in_array($userFriend["id"], $uniqueId)) {
+                    unset($suggestedFriends[$id]);
+                    continue;
+                }
+                if ($userFriend["id"] == $user->id) {
+                    unset($suggestedFriends[$id]);
+                    continue;
+                }
+                array_push($uniqueId, $userFriend["id"]);
+            }
             $suggestedFriends = array_slice($suggestedFriends, $count * $index, $count);
             foreach ($suggestedFriends as $item) {
                 array_push($result, [
