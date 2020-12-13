@@ -25,8 +25,7 @@ class AuthController extends Controller
     {
         $validatorRequire = Validator::make($request->query(), [
             'phonenumber' => 'required',
-            'password' => 'required',
-            'uuid' => 'required'
+            'password' => 'required'
         ]);
         if ($validatorRequire->fails()) {
             return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
@@ -54,7 +53,6 @@ class AuthController extends Controller
         $validator = Validator::make($request->query(), [
             'phonenumber' => 'digits:10',
             'password' => 'string|max:10|min:6',
-            'uuid' => 'uuid'
         ]);
         if ($validator->fails()) {
             return [
