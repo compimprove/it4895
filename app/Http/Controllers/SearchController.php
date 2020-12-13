@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ApiStatusCode;
+use App\Enums\CommonResponse;
 use Illuminate\Http\Request;
 use App\Post;
 use App\User;
@@ -142,25 +143,22 @@ class SearchController extends Controller
         ];
     }
 
-    public function delSavedSearch(Request $request, $search_id)
+    public function delSavedSearch(Request $request)
     {
-
         $user = $request->user();
-
-        if ($user->isBlocked()) {
-            return [
-                "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                "message" => "Parameter type is invalid"
-            ];
+        $validatorRequire = Validator::make($request->query(), [
+            'search_id' => 'required'
+        ]);
+        if ($validatorRequire->fails()) {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
         }
-
-        $search = Search::where('id', $search_id)->first();
+        if ($request->query("search_id") == "") {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
+        }
+        $search = Search::find((int)$request->query("search_id"));
 
         if ($search->delete()) {
-            return response()->json([
-                'code' => ApiStatusCode::OK,
-                'message' => 'Xóa tìm kiếm thành công'
-            ]);
+            return CommonResponse::getResponse(ApiStatusCode::OK);
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CommonResponse;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Image;
@@ -15,8 +16,21 @@ use Illuminate\Support\Facades\Validator;
 class VideoController extends Controller
 {
 
-    public function getListVideos(Request $request) {
-        $token = $request->query('token');
+    public function getListVideos(Request $request)
+    {
+        $validatorRequire = Validator::make($request->query(), [
+            'user_id' => 'required',
+            'in_campaign' => 'required',
+            'campaign_id' => 'required',
+            'latitude' => 'required',
+            'longtitude' => 'required',
+            'last_id' => 'required',
+            'index' => 'required',
+            'count' => 'required'
+        ]);
+        if ($validatorRequire->fails()) {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH);
+        }
         $user_id = $request->query('user_id');
         $in_campaign = $request->query('in_campaign');
         $campaign_id = $request->query('campaign_id');
@@ -25,16 +39,19 @@ class VideoController extends Controller
         $last_id = $request->query('last_id');
         $index = $request->query('index');
         $count = $request->query('count');
+        if ($user_id == "" || $in_campaign == "" || $campaign_id == "" || $latitude == "" || $longtitude == "" || $last_id == "" || $index == "" || $count == "") {
+            return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
+        }
 
         $list_videos = Video::where('id', '>', $last_id)
-                        ->orderBy('id', 'desc')
-                        ->limit($count)
-                        ->get();                        
+            ->orderBy('id', 'desc')
+            ->limit($count)
+            ->get();
         $new_last_id = $list_videos->first()->id;
 
         return response()->json([
             'code' => ApiStatusCode::OK,
-            'message' => 'Lấy danh sách video thành công',
+            'message' => 'OK',
             'data' => [
                 'videos' => $list_videos,
             ],
