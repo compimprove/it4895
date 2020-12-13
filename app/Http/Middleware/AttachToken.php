@@ -23,7 +23,9 @@ class AttachToken
             $request->headers->set("Authorization", "Bearer " . $token);
             return $next($request);
         } else {
-            return CommonResponse::getResponse(ApiStatusCode::TOKEN_INVALID);
+            return response()->json(
+                CommonResponse::getResponse(ApiStatusCode::TOKEN_INVALID)
+            );
         }
     }
 }

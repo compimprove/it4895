@@ -15,7 +15,9 @@ class Authenticate extends Middleware
     {
         $this->authenticate($request, $guards);
         if ($request->user() == null) {
-            return CommonResponse::getResponse(ApiStatusCode::TOKEN_INVALID);
+            return response()->json(
+                CommonResponse::getResponse(ApiStatusCode::TOKEN_INVALID)
+            );
         } else {
             return $next($request);
         }
