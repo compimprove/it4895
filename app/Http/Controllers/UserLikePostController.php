@@ -44,7 +44,7 @@ class UserLikePostController extends Controller
             return response()->json(
                 [
                     'code' => ApiStatusCode::OK,
-                    'message' => 'Liked',
+                    'message' => 'Ok',
                     'data' => [
                         'post_id' => $post_id,
                         'user' => $like->user_id

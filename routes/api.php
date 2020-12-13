@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked'])->group(function () {
+Route::middleware(['attach-token', 'auth:sanctum', 'user-blocked', 'validate-response'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });

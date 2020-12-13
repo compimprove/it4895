@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\ValidateResponse;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -54,11 +55,11 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-
+        'validate-response' => \App\Http\Middleware\ValidateResponse::class,
         'user-blocked' => \App\Http\Middleware\UserBlocked::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'attach-token' => \App\Http\Middleware\AttachToken::class,
+        'attach-token' => \App\Http\Middleware\ValidateResponse::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
@@ -70,8 +71,9 @@ class Kernel extends HttpKernel
     ];
 
     protected $middlewarePriority = [
-        \App\Http\Middleware\AttachToken::class,
+        \App\Http\Middleware\ValidateResponse::class,
         \App\Http\Middleware\Authenticate::class,
         \App\Http\Middleware\UserBlocked::class,
+        \App\Http\Middleware\ValidateResponse::class
     ];
 }
