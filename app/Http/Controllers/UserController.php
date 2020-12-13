@@ -265,12 +265,6 @@ class UserController extends Controller
 
     public function getInfo(Request $request)
     {
-        $validatorRequire = Validator::make($request->query(), [
-            'id' => 'required',
-        ]);
-        if ($validatorRequire->fails()) {
-            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
-        }
         $id = $request->query("id");
         if ($id == "") {
             $user = $request->user();
@@ -278,6 +272,9 @@ class UserController extends Controller
         } else {
             $id = (int)$id;
             $user = User::find($id);
+            if ($user == null) {
+                return CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_VALID);
+            }
         }
         return [
             "code" => ApiStatusCode::OK,
