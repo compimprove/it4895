@@ -16,8 +16,11 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    private function passwordRegexFail(string $password): bool
+    private function passwordRegexFail($password): bool
     {
+        if ($password == null) {
+            return false;
+        }
         return preg_match("/([A-Za-z0-9])\w+/", $password, $matches) != 1 || $matches[0] != $password;
     }
 
