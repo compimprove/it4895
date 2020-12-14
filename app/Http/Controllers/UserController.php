@@ -242,8 +242,8 @@ class UserController extends Controller
                 "message" => "Parameter type is invalid"
             ];
         }
-        $friends = Friends::where("user_id", $user->id)
-            ->where("friend_id", (int)$request->query("user_id"))->get();
+        $friends = Friends::where("friend_id", $user->id)
+            ->where("user_id", (int)$request->query("user_id"))->get();
         if ($friends->isEmpty()) {
             return [
                 "code" => ApiStatusCode::NOT_EXISTED,
