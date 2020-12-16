@@ -97,7 +97,7 @@ class SettingsController extends Controller
             $newUserSetting->user_id = $request->user()->id;
             $newUserSetting->save();
         }
-        $userSetting = Settings::find($newUserSetting->id);
+        $userSetting = $request->user()->setting;
         unset($userSetting["user_id"]);
         unset($userSetting["id"]);
         unset($userSetting["created_at"]);
