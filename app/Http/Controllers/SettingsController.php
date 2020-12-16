@@ -14,28 +14,29 @@ class SettingsController extends Controller
     public function setPushSetting(Request $request)
     {
         $settings = [
-            "like_comment" => 'required',
-            "from_friends" => 'required',
-            "requested_friend" => 'required',
-            "suggested_friend" => 'required',
-            "birthday" => 'required',
-            "video" => 'required',
-            "report" => 'required',
-            "sound_on" => 'required',
-            "notification_on" => 'required',
-            "vibrant_on" => 'required',
-            "led_on" => 'required'
+            "like_comment" => true,
+            "from_friends" => true,
+            "requested_friend" => true,
+            "suggested_friend" => true,
+            "birthday" => true,
+            "video" => true,
+            "report" => true,
+            "sound_on" => true,
+            "notification_on" => true,
+            "vibrant_on" => true,
+            "led_on" => true
         ];
-        $validatorRequire = Validator::make($request->query(), $settings);
-        if ($validatorRequire->fails()) {
-            return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
-        }
         foreach ($settings as $setting => $value) {
             $queryValue = $request->query($setting);
-            if ($queryValue == '' || ((int)$queryValue != 0 && (int)$queryValue != 1)) {
+            if ($queryValue == "") continue;
+            $queryValue = (int)$queryValue;
+            if (($queryValue != 0 && $queryValue != 1)) {
                 return [
                     "code" => ApiStatusCode::PARAMETER_TYPE_INVALID,
-                    "message" => "Parameter type is invalid: " . $setting
+                    "message" => "Parameter type is invalid",
+                    "data" => [
+                        "error" => $setting . " value " . $request->query($setting),
+                    ]
                 ];
             } else {
                 $settings[$setting] = $queryValue;
@@ -53,7 +54,7 @@ class SettingsController extends Controller
     public function checkNewVersion(Request $request)
     {
         $validatorRequire = Validator::make($request->query(), [
-            'last_update' => 'required',
+            'last_update' => "require",
         ]);
         if ($validatorRequire->fails()) {
             return response()->json(CommonResponse::getResponse(ApiStatusCode::PARAMETER_NOT_ENOUGH));
