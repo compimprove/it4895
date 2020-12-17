@@ -92,16 +92,24 @@ class SettingsController extends Controller
 
     public function getPushSetting(Request $request)
     {
-        if ($request->user()->setting == null) {
-            $newUserSetting = new Settings();
-            $newUserSetting->user_id = $request->user()->id;
-            $newUserSetting->save();
-        }
         $userSetting = $request->user()->setting;
+        if ($userSetting == null) {
+            $userSetting = new Settings();
+            $userSetting->user_id = $request->user()->id;
+            $userSetting->save();
+        }
         unset($userSetting["user_id"]);
         unset($userSetting["id"]);
         unset($userSetting["created_at"]);
         unset($userSetting["updated_at"]);
+        foreach ($userSetting as $key => $item) {
+            if ($item == true) {
+                $userSetting[$key] = 1;
+            }
+            if ($item == false) {
+                $userSetting[$key] = 0;
+            }
+        }
         return [
             "code" => ApiStatusCode::OK,
             "message" => "OK",
