@@ -102,11 +102,24 @@ class SettingsController extends Controller
         unset($userSetting["id"]);
         unset($userSetting["created_at"]);
         unset($userSetting["updated_at"]);
-        foreach ($userSetting as $key => $item) {
-            if ($item == true) {
+        $settings = [
+            "like_comment" => true,
+            "from_friends" => true,
+            "requested_friend" => true,
+            "suggested_friend" => true,
+            "birthday" => true,
+            "video" => true,
+            "report" => true,
+            "sound_on" => true,
+            "notification_on" => true,
+            "vibrant_on" => true,
+            "led_on" => true
+        ];
+        foreach ($settings as $key => $item) {
+            if ($userSetting[$key] == true) {
                 $userSetting[$key] = 1;
             }
-            if ($item == false) {
+            if ($userSetting[$key] == false) {
                 $userSetting[$key] = 0;
             }
         }
