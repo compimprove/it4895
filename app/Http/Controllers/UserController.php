@@ -279,7 +279,7 @@ class UserController extends Controller
 
     public function getInfo(Request $request)
     {
-        $id = $request->query("id");
+        $id = $request->query("user_id");
         if ($id == "") {
             $user = $request->user();
             $id = $user->id;
