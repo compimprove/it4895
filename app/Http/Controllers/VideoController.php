@@ -23,7 +23,7 @@ class VideoController extends Controller
             'in_campaign' => 'required',
             'campaign_id' => 'required',
             'latitude' => 'required',
-            'longtitude' => 'required',
+            'longitude' => 'required',
             'last_id' => 'required',
             'index' => 'required',
             'count' => 'required'
