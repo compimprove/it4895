@@ -35,7 +35,7 @@ class VideoController extends Controller
         $in_campaign = $request->query('in_campaign');
         $campaign_id = $request->query('campaign_id');
         $latitude = $request->query('latitude');
-        $longtitude = $request->query('longtitude');
+        $longtitude = $request->query('longitude');
         $last_id = $request->query('last_id');
         $index = $request->query('index');
         $count = $request->query('count');
